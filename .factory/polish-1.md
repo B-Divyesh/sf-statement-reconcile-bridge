@@ -19,3 +19,8 @@ manual review, exact cents, input errors, dark contrast, route focus, PWA
 offline/update behavior, metadata, legal pages, and privacy remain covered by
 the 19-test browser suite. This repair retains the concrete-and-moss workbench
 identity and the static local-first PWA artifact class.
+
+Live cold-load evidence is at `/tmp/srb-live-evidence/screenshot-desktop.png`
+and `/tmp/srb-live-evidence/screenshot-mobile.png`; the live URL check was
+`https://statement-reconcile-bridge.sociobot.in/` and the live 404 check was
+`https://statement-reconcile-bridge.sociobot.in/missing-row-polish-1`.
