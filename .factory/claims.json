@@ -51,14 +51,14 @@
   {
     "id": "manual-review",
     "claim": "Matches remain suggestions until a person accepts them.",
-    "where": "Landing privacy section, workbench, README",
+    "where": "Landing privacy section, workbench, README, catalog description",
     "test": "npm test -- --grep @claim:manual-review",
     "sandbox": "Fresh /demo before and after accept and undo"
   },
   {
     "id": "csv-export",
     "claim": "Exports only explicitly accepted rows as CSV.",
-    "where": "Workbench, README",
+    "where": "Workbench, README, catalog description",
     "test": "npm test -- --grep @claim:csv-export",
     "sandbox": "Fresh /demo with one human acceptance"
   },
@@ -72,7 +72,7 @@
   {
     "id": "local-only",
     "claim": "Transaction files stay in the browser during demo and real work.",
-    "where": "Landing facts, privacy page, README",
+    "where": "Landing facts, privacy page, README, catalog description",
     "test": "npm test -- --grep @claim:local-only",
     "sandbox": "Full demo-to-real import/review/export with network capture"
   },

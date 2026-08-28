@@ -1,1 +1,1 @@
-Reconcile statement and ledger files locally, review every match, and export approved rows.
+Reconcile statement and ledger files locally, review each match, and export reviewed rows.

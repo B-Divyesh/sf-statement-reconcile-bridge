@@ -13,7 +13,7 @@ facts now end by 728.03px at 1440×900. The copy audit now contains the complete
 landing and README copy with mechanically verified whitespace word counts.
 
 The catalog description is now: “Reconcile statement and ledger files locally,
-review every match, and export approved rows.” It starts with a verb and is 91
+review each match, and export reviewed rows.” It starts with a verb and is 90
 characters long.
 
 ## Release
