@@ -98,6 +98,13 @@
     "sandbox": "Fresh workbench, saved rule, reload, network capture"
   },
   {
+    "id": "cleanup-rule-matching",
+    "claim": "A saved cleanup rule updates payee wording before matching.",
+    "where": "Landing cleanup-rules section, workbench, README",
+    "test": "npm test -- --grep @claim:cleanup-rule-matching",
+    "sandbox": "Fresh workbench with a deliberately mismatched payee pair; save a rule and observe the recalculated score and reason"
+  },
+  {
     "id": "no-advertising-analytics",
     "claim": "The app does not use advertising analytics.",
     "where": "Privacy page",

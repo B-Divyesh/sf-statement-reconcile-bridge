@@ -16,7 +16,7 @@
 | Move through a monthly statement                                                 |     5 | pass   |
 | Add a bank CSV, OFX, or QIF and your ledger CSV.                                 |    12 | pass   |
 | See one-to-one matches with the reason for each score.                           |    10 | pass   |
-| Hand approved rows and an audit record back to your ledger.                      |    12 | pass   |
+| Hand approved rows and an audit report back to your ledger.                      |    12 | pass   |
 | Local cleanup rules                                                              |     3 | pass   |
 | Save recurring payee wording                                                     |     4 | pass   |
 | Keep bank wording and ledger wording aligned before you review suggestions.      |    11 | pass   |

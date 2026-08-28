@@ -55,6 +55,21 @@ test("@claim:sample-reconcile loads a complete sample review queue", async ({
 test("@claim:demo-isolation enters and leaves an isolated sample namespace", async ({
   page,
 }) => {
+  await page.goto("/?demo=1");
+  await expect(
+    page.getByRole("heading", { name: "Review statement matches" }),
+  ).toBeVisible();
+  await expect(
+    page.getByText("Demo — sample data, nothing is saved"),
+  ).toBeVisible();
+  await page.getByRole("button", { name: "Reset demo" }).click();
+  expect(
+    await page.evaluate(() =>
+      Object.keys(localStorage).some((key) =>
+        key.startsWith("demo:statement-reconcile-bridge:"),
+      ),
+    ),
+  ).toBeTruthy();
   await page.goto("/");
   await page.getByRole("button", { name: "Try it with sample data" }).click();
   await expect(page).toHaveURL(/\/demo$/);
@@ -279,6 +294,27 @@ test("@claim:rules-local-only stores a cleanup rule only in local browser state"
   expect(external).toEqual([]);
 });
 
+test("@claim:cleanup-rule-matching applies saved wording before recalculating suggestions", async ({
+  page,
+}) => {
+  await page.goto("/work");
+  await importCsvPair(
+    page,
+    csv("2026-04-02,POS FARM SHOP,-12.50"),
+    csv("2026-04-02,Greenmart,-12.50"),
+  );
+  const match = page.locator(".match").first();
+  await expect(match.locator(".score b")).toHaveText("65%");
+  await expect(match.locator(".score span")).toContainText(
+    "Check the payee before accepting.",
+  );
+  await page.locator("#rule-find").fill("POS FARM SHOP");
+  await page.locator("#rule-replace").fill("Greenmart");
+  await page.getByRole("button", { name: "Save rule" }).click();
+  await expect(match.locator(".score b")).toHaveText("95%");
+  await expect(match.locator(".score span")).toContainText("payee words agree");
+});
+
 test("@claim:no-advertising-analytics has no tracker scripts or advertising requests", async ({
   page,
 }) => {
@@ -397,6 +433,14 @@ test("@regression: workspace markup and route metadata are complete", async ({
   await expect(page.locator("main")).not.toContainText("<>");
   const sitemap = readFileSync("public/sitemap.xml", "utf8");
   expect(sitemap).toContain("/work</loc>");
+  const twitterFields = [
+    'name="twitter:card"',
+    'name="twitter:title"',
+    'name="twitter:description"',
+    'name="twitter:image"',
+  ];
+  const home = readFileSync("index.html", "utf8");
+  for (const marker of twitterFields) expect(home).toContain(marker);
   for (const file of [
     "demo/index.html",
     "work/index.html",
@@ -405,7 +449,7 @@ test("@regression: workspace markup and route metadata are complete", async ({
   ]) {
     const html = readFileSync(file, "utf8");
     expect(html, file).toContain('property="og:title"');
-    expect(html, file).toContain('name="twitter:card"');
+    for (const marker of twitterFields) expect(html, file).toContain(marker);
   }
   const notFound = readFileSync("public/404.html", "utf8");
   expect(notFound).toContain("<header>");
@@ -414,9 +458,7 @@ test("@regression: workspace markup and route metadata are complete", async ({
     'property="og:title"',
     'property="og:description"',
     'property="og:image"',
-    'name="twitter:card"',
-    'name="twitter:title"',
-    'name="twitter:description"',
+    ...twitterFields,
     'rel="apple-touch-icon"',
   ])
     expect(notFound).toContain(marker);

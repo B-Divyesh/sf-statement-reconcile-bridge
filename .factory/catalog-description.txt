@@ -1,1 +1,1 @@
-Reconcile bank statements with a private ledger in your browser, without a bank login.
+Reconcile downloaded statements with your private ledger in your browser, without a bank login.

@@ -10,7 +10,7 @@ and a JSON audit report. Files stay in browser storage and are never sent to a
 server.
 
 The complete reconciliation flow is free. Save local cleanup rules for recurring
-bank wording without an account.
+bank wording before matching.
 
 ## Run it
 

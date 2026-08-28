@@ -1,21 +1,41 @@
-# Review 2 handoff
+# Polish 2 handoff
 
 ## Result
 
-Completed the requested adversarial first-read review without changing product code. The result is **FAIL** with three minor findings in `.factory/review-2.md`:
+Repaired the cumulative review set for Statement Reconcile Bridge while keeping
+the concrete-and-moss local-first PWA identity and static deployment class.
+The cleanup-rule behavior is now an explicit, browser-proven claim; all routes
+now provide complete Twitter-card metadata; and the landing copy uses one term:
+“audit report.” The direct `?demo=1` entry is covered with its persistent
+isolated-data banner and Reset action.
 
-1. Twitter-card fields are incomplete.
-2. Landing copy uses “audit record” while the product uses “audit report.”
-3. Cleanup-rule matching behavior is public copy without a matching claim/test.
+## Verification before deployment
 
-## Verification
+- `npm ci`: passed with 0 vulnerabilities.
+- `npm run typecheck`: passed.
+- `npm run lint`: passed.
+- Every command named in `.factory/claims.json` was run from a clean clone at
+  `/tmp/srb-clean-qBXOcC`; all 16 passed. Claim/tag cross-check found 16
+  claims, 16 tags, and no missing, duplicate, or extra IDs. The confirmation
+  run was `npm test -- --grep @claim --workers=4`: 16/16 passed.
+- `npm test`: 20/20 Playwright tests passed, including CSV/OFX/QIF import,
+  explicit review, exports, real persistence, isolated demo reset/exit,
+  offline reload, privacy request capture, routing/focus, mobile targets, and
+  dual-theme Axe scans.
+- `npm run build`: passed and emitted `dist/`. Main JavaScript is 20.12 kB
+  (7.66 kB gzip), CSS is 11.01 kB (3.25 kB gzip), and hero art is 89.38 kB.
+- `verify-url.sh` against local production preview reported HTTP 200, title,
+  language, one H1, main landmark, complete image alt text, and no console
+  errors. Local evidence is under `/tmp/srb-polish-2/local-verify/`.
+- Lighthouse mobile: performance 100, accessibility 100, FCP 1.0 s, LCP
+  1.9 s, CLS 0 (`/tmp/srb-polish-2/lighthouse-mobile.json`).
 
-- Fresh live Chromium checks at 390×844 and 1440×900 passed the cold-read gate.
-- One-click demo showed 10 sample suggestions; Reset, isolated `demo:` storage, Start for real, request capture, and live offline reload were verified.
-- In a fresh clone, all 15 declared claim commands passed; the confirmation run passed 15/15 and `npm test` passed 19/19.
-- `npm run lint` and `npm run build` passed; `dist/` was produced.
-- Live Axe scans found no serious or critical issue across public routes in light and dark themes. Route/link crawl, deep linking, Back/focus behavior, 404 status, metadata, headers, and prior-finding closure were checked.
+## Deployment and live verification
 
-## Known gaps / next steps
+Pending the work-order push and cold live recheck. This section is completed
+after deployment, including the exact commit, live URL evidence, and screenshots.
 
-Apply the three concrete repairs in `.factory/review-2.md`, then repeat this full review. No product source, deployment, infrastructure, or data was modified by this review.
+## Known gaps
+
+None identified. There are no paid or backend integrations to configure; this
+is a local-only static PWA. The factory owns deployment infrastructure.
