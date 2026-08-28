@@ -59,8 +59,46 @@ a static, local-first PWA with the original concrete-and-moss visual system.
 
 ## Deployment
 
-Deployment and final live identity, response-policy, offline, and route checks
-are recorded in the final section below after upload.
+- Repair commit `c02920e073dc470051e48942769fd9fba3fa0a6d` was pushed to
+  `origin/main`.
+- `/opt/fleet/lib/deploy-static.sh statement-reconcile-bridge dist` completed
+  successfully with Azure deployment ID
+  `9bf1a58e-76ef-4d7b-9dfe-09d97660d28a`.
+- The production URL is
+  `https://statement-reconcile-bridge.sociobot.in`.
+- Live JS SHA-256 is
+  `605375154081c7ac1242eadf099ec8a4645f340e22e9ed688de8df282ad312b9`;
+  live CSS is
+  `dbc86294780dedfffe4cd17094696fce9ead916cd08d86244ae94d425ecd434a`;
+  live worker is
+  `7029ddf9ae36d31cee99d51d9c387cc61492ff43fb036f74dae5f1364dc80a7e`;
+  and live manifest is
+  `5c1cca0fd59c683827c271a391a57db2108ad93eb75e7dcfb6c945e8c3ced2cd`.
+  Every hash exactly matches `dist/`.
+- Live `verify-url.sh` passed on `/`, `/demo`, `/work`, `/privacy`, and
+  `/terms`: each returned 200 with the correct title, `lang=en`, one H1, one
+  main landmark, alt text, and no console errors. A missing route returned the
+  designed header/main/footer page with HTTP 404.
+- Live headers include HSTS, `nosniff`, strict-origin referrer policy, and the
+  restrictive CSP. The CSP allows only self plus `api.sociobot.in` for
+  connections. Hashed assets return one-year immutable caching; `sw.js`
+  returns `no-cache`.
+- A fresh 390 by 844 live browser placed the H1, audience text, and sample
+  action bottoms at 307, 403, and 469 px. The demo opened with 10 suggestions,
+  zero accepted rows, and only the two `demo:` keys. Offline reload retained
+  all 10 rows.
+- A live real-work import sent no cross-origin requests. A `-$10.00` statement
+  against a `-$10.01` ledger row remained unmatched. A real invalid-license
+  check reached Sociobot, returned HTTP 200, and displayed the invalid-license
+  recovery message without a console or CSP error.
+- Live Axe scans across all five routes in light and dark found zero serious or
+  critical issues. The live browser recorded zero console errors.
+- Live mobile Lighthouse — performance 100, accessibility 100, best practices
+  100, SEO 100; FCP 0.8 s, LCP 1.4 s, TBT 60 ms, CLS 0, total transfer 101 KiB.
+- Billing response-policy check — 40 invalid verification requests at
+  concurrency 20 returned 30 HTTP 200 and 10 HTTP 429 responses. Rate-limited
+  responses included `Retry-After: 3` or `4`; the invalid body was
+  `{valid:false, reason:"invalid", expires_at:null}`.
 
 ## Known gaps
 
