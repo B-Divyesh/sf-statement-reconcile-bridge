@@ -1,70 +1,53 @@
-# Handoff — Statement Reconcile Bridge repair
+# Verification handoff — FAIL
 
 ## Result
 
-Repaired every release blocker recorded in `.factory/verification.md` for
-candidate `a06cd1c6c91f45b9a042b9a5992d06e7fbc744f5`. The product remains a
-static Vite TypeScript PWA, deploys from `dist/`, and keeps its local-first
-reconciliation behavior.
+**FAIL — do not release candidate
+`cdd19453a98b42d09397628ba897d721640ca68b`.** The deployed product at
+https://statement-reconcile-bridge.sociobot.in matches the candidate, but fresh
+independent QA found release-blocking mobile, reconciliation-integrity,
+accessibility, input-validation, and claims-contract defects.
 
-## Repairs
+The complete evidence and reproduction details are in
+`.factory/verification-2.md`. No product source was modified during this
+verification.
 
-- The landing **Try it with sample data** action now changes route and storage
-  mode before it writes. It creates only
-  `demo:statement-reconcile-bridge:*` state, displays the persistent demo
-  banner, and leaves real state untouched.
-- Added `/work`, linked from landing navigation and **Start with your files**.
-  **Start for real** discards demo state and reaches the two-file real importer.
-- Import, empty license, and rule-form failures now render a visible,
-  persistent `role=alert` message with recovery guidance.
-- Allowed only `https://api.sociobot.in` in CSP `connect-src`; recorded browser
-  coverage proves the restore flow consumes an API verdict. No billing request
-  is made until the visitor explicitly restores a license.
-- Added 13 claim entries and exact Playwright coverage for demo isolation,
-  free reconciliation, CSV/OFX/QIF input, one-to-one matching, both exports,
-  local-only use, no bank login, offline reload, license verification, $19
-  price, and no budget advice.
-- Added route-specific build entries for `/demo`, `/work`, `/privacy`, and
-  `/terms`, removed the catch-all navigation fallback, and retained the
-  Static Web Apps 404 override. Unknown URLs can now receive a real 404.
-- Hashed assets receive immutable one-year cache headers. The service worker
-  uses a versioned cache, clears old caches, and reports an available update
-  with an in-app refresh control before `skipWaiting`.
-- Raised demo and review controls to 44px, made route headings focusable,
-  populated the route live region, and added a local `/404.css` so the CSP does
-  not block the designed 404 page.
+## Main blockers
 
-## Verification evidence
+- At 390×844 the cold first viewport shows only navigation and a 1,024 px-tall
+  image crop. The headline, audience sentence, and sample CTA are below it; the
+  CTA begins around y=1,535 px.
+- High-confidence matches are automatically finalized as `accepted`, cannot be
+  rejected, and are exported before any review. A `-$10.00` statement row was
+  incorrectly matched and exported against a `-$10.01` ledger row at 95% while
+  described as the “Same amount.”
+- Axe reports serious dark-mode contrast failures as low as 1.4:1.
+- Malformed OFX dates such as `BAD` are accepted and rendered as `BAD--`.
+- Review actions and initial load force focus to the h1, breaking efficient
+  keyboard use and bypassing the skip link.
+- Public claims remain unlisted/untested, and paid merchant/refund disclosures
+  are missing.
 
-Executed from a clean install on 2026-08-28:
+## Verification summary
 
-- `npm ci` — pass; 0 vulnerabilities.
-- `npm test` — pass; **15/15 Playwright** tests. This covers desktop, 390px
-  mobile, keyboard Enter navigation, route focus, error announcements,
-  importer workflows, download content, privacy network capture, and offline
-  reload.
-- `npm run build` — pass (`tsc --noEmit && vite build`); `dist/index.html` and
-  static route entries are produced. Gzipped initial JS is **8.09 KB**, CSS is
-  **3.12 KB**, and hero WebP is **89.38 KB**.
-- Every declared claim has one exact `@claim:` test tag; the full clean suite
-  passed, and the individual claim commands were spot-checked from the
-  generated claim inventory.
-- `/opt/fleet/lib/verify-url.sh http://127.0.0.1:4173 /tmp/statement-bridge-verify`
-  — pass: HTTP 200, title, `lang=en`, one h1, main landmark, image alt, and no
-  load errors.
-- Axe 4.11 injected through Playwright on `/`, `/demo`, `/work`, `/privacy`,
-  and `/terms` — **0 total WCAG 2A/AA violations** (therefore 0 serious or
-  critical). The standalone Axe CLI was unavailable because it cannot locate a
-  system Chrome binary; the equivalent run used Playwright Chromium.
-- Console/page-error smoke at 1440px and 390px across every public route —
-  **0 errors**.
-- Mobile Lighthouse (Playwright Chromium, local production preview) —
-  **99 performance, 100 accessibility**; FCP 1.1s, LCP 2.0s, TBT 0ms, CLS 0.
-- Static deployment policy checked: no catch-all navigation fallback, an
-  explicit 404 rewrite, immutable `/assets/*` caching, no-cache worker, and
-  the scoped Sociobot billing CSP origin.
+- Mandatory first-read: desktop PASS; 390 px mobile FAIL.
+- `npm ci`: PASS, 0 vulnerabilities.
+- Every one of 13 exact claim commands: PASS after install.
+- `npm test`: PASS, 15/15.
+- `npm run build`: PASS; `dist/` produced.
+- Live deployment identity: PASS by exact JS, CSS, worker, and manifest hashes.
+- Live Lighthouse mobile: 93 performance, 100 accessibility, 100 best
+  practices, 100 SEO; LCP 1.6 s, CLS 0.
+- Axe across five local and five live routes, light/dark: FAIL in dark mode;
+  serious contrast findings on `/` and `/demo`.
+- Live offline reload: PASS. Simulated service-worker update/activation: PASS.
+- Privacy network capture: PASS for demo and real import/export; only explicit
+  license restore contacts `api.sociobot.in`.
+- Billing rate limit: PASS; a 40-request burst yielded 30×200 and 10×429, with
+  `Retry-After: 4`.
+- Live routes/security/caching/404: PASS. No console or page errors observed.
 
-## Run and deploy
+## Re-run
 
 ```sh
 npm ci
@@ -72,15 +55,7 @@ npm test
 npm run build
 ```
 
-Deploy `dist/` as the existing static artifact. The checked-in
-`staticwebapp.config.json` is part of the artifact and supplies production
-security, cache, route, and 404 behavior.
-
-## Known gaps
-
-None in the repaired product. Commit `3a3be0502a1ec01794e9b63d9ec11d46b0ed2c50`
-was pushed to `origin/main`, which is the configured static release handoff.
-A direct `swa deploy dist --app-name statement-reconcile-bridge --env
-production` authenticated with the managed identity but stalled while Azure
-resolved the Static Web App settings, so no live identity/hash re-check was
-possible in this container. The generated local credential file was removed.
+After repairs, rerun every command in `.factory/claims.json`, then repeat the
+independent amount-mismatch, pre-review export, 390 px first-screen, dark Axe,
+malformed OFX, and keyboard-focus cases documented in
+`.factory/verification-2.md`.
