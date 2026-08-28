@@ -78,7 +78,9 @@ security, cache, route, and 404 behavior.
 
 ## Known gaps
 
-None in the repaired product. Live deployment and identity/hash verification
-must be performed by the configured factory deployment after this commit is
-pushed; this container has no repository-specific deploy script or deployed
-credentials.
+None in the repaired product. Commit `3a3be0502a1ec01794e9b63d9ec11d46b0ed2c50`
+was pushed to `origin/main`, which is the configured static release handoff.
+A direct `swa deploy dist --app-name statement-reconcile-bridge --env
+production` authenticated with the managed identity but stalled while Azure
+resolved the Static Web App settings, so no live identity/hash re-check was
+possible in this container. The generated local credential file was removed.
