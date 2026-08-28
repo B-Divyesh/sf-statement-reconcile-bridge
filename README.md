@@ -20,7 +20,7 @@ npm run dev
 ```
 
 Open `http://localhost:5173`. Use `/work` to import your statement and ledger
-files, or `/demo` for a ready-to-review sample that uses a separate
+files, or `/demo` (or `/?demo=1`) for a ready-to-review sample in a separate
 local-storage namespace. The app works offline after its first visit because
 the service worker stores the app shell.
 

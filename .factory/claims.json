@@ -35,6 +35,13 @@
     "sandbox": "Duplicate-row and one-cent-mismatch fixtures"
   },
   {
+    "id": "match-score-reasons",
+    "claim": "Every displayed match has a plain-language reason for its score or open status.",
+    "where": "Landing steps, workbench",
+    "test": "npm test -- --grep @claim:match-score-reasons",
+    "sandbox": "Fresh /work visit with high-confidence, caution, and unmatched fixtures"
+  },
+  {
     "id": "manual-review",
     "claim": "Matches remain suggestions until a person accepts them.",
     "where": "Landing privacy section, workbench, README",

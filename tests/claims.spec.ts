@@ -55,14 +55,34 @@ test("@claim:sample-reconcile loads a complete sample review queue", async ({
 test("@claim:demo-isolation enters and leaves an isolated sample namespace", async ({
   page,
 }) => {
+  await page.goto("/");
+  await page.evaluate(() =>
+    localStorage.setItem(
+      "real:statement-reconcile-bridge:sentinel",
+      "untouched",
+    ),
+  );
   await page.goto("/?demo=1");
+  await expect(page).toHaveTitle("Demo — Statement Reconcile Bridge");
+  await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
+    "href",
+    "https://statement-reconcile-bridge.sociobot.in/demo",
+  );
   await expect(
     page.getByRole("heading", { name: "Review statement matches" }),
   ).toBeVisible();
   await expect(
     page.getByText("Demo — sample data, nothing is saved"),
   ).toBeVisible();
+  await page.getByRole("button", { name: "Accept" }).first().click();
+  await expect(page.locator(".match.accepted")).toHaveCount(1);
+  expect(
+    await page.evaluate(() =>
+      localStorage.getItem("real:statement-reconcile-bridge:sentinel"),
+    ),
+  ).toBe("untouched");
   await page.getByRole("button", { name: "Reset demo" }).click();
+  await expect(page.locator(".match.accepted")).toHaveCount(0);
   expect(
     await page.evaluate(() =>
       Object.keys(localStorage).some((key) =>
@@ -70,19 +90,46 @@ test("@claim:demo-isolation enters and leaves an isolated sample namespace", asy
       ),
     ),
   ).toBeTruthy();
+  expect(
+    await page.evaluate(() =>
+      localStorage.getItem("real:statement-reconcile-bridge:sentinel"),
+    ),
+  ).toBe("untouched");
+  await page.getByRole("button", { name: "Start for real" }).click();
+  await expect(page).toHaveURL(/\/work$/);
+  await expect(page.locator('input[type="file"]')).toHaveCount(2);
+  await expect(
+    page.getByText("Demo — sample data, nothing is saved"),
+  ).toHaveCount(0);
+  let keys = await page.evaluate(() => Object.keys(localStorage));
+  expect(
+    keys.some((key) => key.startsWith("demo:statement-reconcile-bridge:")),
+  ).toBeFalsy();
+  expect(
+    await page.evaluate(() =>
+      localStorage.getItem("real:statement-reconcile-bridge:sentinel"),
+    ),
+  ).toBe("untouched");
   await page.goto("/");
   await page.getByRole("button", { name: "Try it with sample data" }).click();
   await expect(page).toHaveURL(/\/demo$/);
   await expect(
     page.getByText("Demo — sample data, nothing is saved"),
   ).toBeVisible();
-  let keys = await page.evaluate(() => Object.keys(localStorage));
+  keys = await page.evaluate(() => Object.keys(localStorage));
   expect(
     keys.some((key) => key.startsWith("demo:statement-reconcile-bridge:")),
   ).toBeTruthy();
   expect(
-    keys.some((key) => key.startsWith("real:statement-reconcile-bridge:")),
-  ).toBeFalsy();
+    await page.evaluate(() =>
+      localStorage.getItem("real:statement-reconcile-bridge:state"),
+    ),
+  ).toBeNull();
+  expect(
+    await page.evaluate(() =>
+      localStorage.getItem("real:statement-reconcile-bridge:sentinel"),
+    ),
+  ).toBe("untouched");
   await page.getByRole("link", { name: "Reconcile files" }).click();
   keys = await page.evaluate(() => Object.keys(localStorage));
   expect(
@@ -168,6 +215,40 @@ test("@claim:one-to-one-matching uses each exact-cent ledger row only once", asy
   await expect(
     page.getByText("No same-amount ledger row within three days."),
   ).toBeVisible();
+});
+
+test("@claim:match-score-reasons explains every displayed suggestion and open row", async ({
+  page,
+}) => {
+  await page.goto("/work");
+  await importCsvPair(
+    page,
+    csv(
+      "2026-04-02,Oak Reed Coffee,-10.00\n2026-04-03,Unknown Shop,-20.00\n2026-04-04,No Ledger Match,-30.00",
+    ),
+    csv("2026-04-02,Oak Reed Coffee,-10.00\n2026-04-03,Other Ledger,-20.00"),
+  );
+  const high = page.locator(".match").filter({ hasText: "Oak Reed Coffee" });
+  const caution = page.locator(".match").filter({ hasText: "Unknown Shop" });
+  const unmatched = page
+    .locator(".match")
+    .filter({ hasText: "No Ledger Match" });
+  await expect(high.locator(".score b")).toHaveText("95%");
+  await expect(high.locator(".score span")).toHaveText(
+    "Exact amount and close date; payee words agree. Review before accepting.",
+  );
+  await expect(caution.locator(".score b")).toHaveText("65%");
+  await expect(caution.locator(".score span")).toHaveText(
+    "Exact amount and close date. Check the payee before accepting.",
+  );
+  await expect(unmatched.locator(".score b")).toHaveText("—");
+  await expect(unmatched.locator(".score span")).toHaveText(
+    "No same-amount ledger row within three days.",
+  );
+  for (const reason of await page
+    .locator(".match .score span")
+    .allTextContents())
+    expect(reason.trim()).not.toBe("");
 });
 
 test("@claim:manual-review requires a person to accept every exported row", async ({
@@ -330,10 +411,28 @@ test("@claim:no-advertising-analytics has no tracker scripts or advertising requ
   ).toBeVisible();
 });
 
-test("@regression: invalid CSV, OFX, truncated, and oversized inputs are announced and recoverable", async ({
+test("@regression: calendar-invalid CSV and QIF dates, OFX, truncated, and oversized inputs are announced and recoverable", async ({
   page,
 }) => {
   await page.goto("/work");
+  await page.locator("#statement-file").setInputFiles({
+    name: "impossible-date.csv",
+    mimeType: "text/csv",
+    buffer: csv("2026-02-30,Impossible date,-10.00"),
+  });
+  await expect(page.getByRole("alert")).toContainText(
+    "Row 2 has an unreadable date. Use YYYY-MM-DD or MM/DD/YYYY.",
+  );
+  await expect(page.locator(".match")).toHaveCount(0);
+  await page.locator("#statement-file").setInputFiles({
+    name: "impossible-date.qif",
+    mimeType: "text/plain",
+    buffer: Buffer.from("!Type:Bank\nD02/30/2026\nT-4.80\nPImpossible date\n^"),
+  });
+  await expect(page.getByRole("alert")).toContainText(
+    "QIF transaction 1 has an unreadable date.",
+  );
+  await expect(page.locator(".match")).toHaveCount(0);
   await page.locator("#statement-file").setInputFiles({
     name: "broken.ofx",
     mimeType: "text/plain",
@@ -364,6 +463,12 @@ test("@regression: invalid CSV, OFX, truncated, and oversized inputs are announc
     buffer: statement,
   });
   await expect(page.getByRole("alert")).toHaveCount(0);
+  await page.locator("#ledger-file").setInputFiles({
+    name: "valid-ledger.csv",
+    mimeType: "text/csv",
+    buffer: ledger,
+  });
+  await expect(page.locator(".match.suggested")).toHaveCount(2);
 });
 
 test("@regression: mobile first screen, touch targets, and keyboard focus remain usable", async ({
@@ -406,6 +511,81 @@ test("@regression: mobile first screen, touch targets, and keyboard focus remain
       expect(box.width, `control ${index} width`).toBeGreaterThanOrEqual(44);
     }
   }
+});
+
+test("@regression: direct routes have metadata, legal links, and focused history navigation", async ({
+  page,
+}) => {
+  const routes = [
+    {
+      path: "/",
+      title: "Statement Reconcile Bridge — Reconcile statement files",
+      canonical: "https://statement-reconcile-bridge.sociobot.in/",
+      heading: "Reconcile your statement with your ledger",
+    },
+    {
+      path: "/demo",
+      title: "Demo — Statement Reconcile Bridge",
+      canonical: "https://statement-reconcile-bridge.sociobot.in/demo",
+      heading: "Review statement matches",
+    },
+    {
+      path: "/work",
+      title: "Reconcile files — Statement Reconcile Bridge",
+      canonical: "https://statement-reconcile-bridge.sociobot.in/work",
+      heading: "Review statement matches",
+    },
+    {
+      path: "/privacy",
+      title: "Privacy — Statement Reconcile Bridge",
+      canonical: "https://statement-reconcile-bridge.sociobot.in/privacy",
+      heading: "Your files stay on your device",
+    },
+    {
+      path: "/terms",
+      title: "Terms — Statement Reconcile Bridge",
+      canonical: "https://statement-reconcile-bridge.sociobot.in/terms",
+      heading: "Terms for Statement Reconcile Bridge",
+    },
+  ];
+  for (const route of routes) {
+    await page.goto(route.path);
+    await expect(page).toHaveTitle(route.title);
+    await expect(page.locator('meta[name="description"]')).not.toHaveAttribute(
+      "content",
+      "",
+    );
+    await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
+      "href",
+      route.canonical,
+    );
+    await expect(page.getByRole("main")).toHaveCount(1);
+    await expect(page.getByRole("heading", { level: 1 })).toHaveText(
+      route.heading,
+    );
+    await expect(page.getByRole("link", { name: "Privacy" })).not.toHaveCount(
+      0,
+    );
+    await expect(page.getByRole("link", { name: "Terms" })).not.toHaveCount(0);
+  }
+
+  await page.goto("/");
+  await page.getByRole("link", { name: "Privacy" }).first().click();
+  const privacyHeading = page.getByRole("heading", {
+    name: "Your files stay on your device",
+  });
+  await expect(privacyHeading).toBeFocused();
+  await expect(page.locator("#route-note")).toHaveText(
+    "Your files stay on your device",
+  );
+  await page.goBack();
+  const homeHeading = page.getByRole("heading", {
+    name: "Reconcile your statement with your ledger",
+  });
+  await expect(homeHeading).toBeFocused();
+  await expect(page.locator("#route-note")).toHaveText(
+    "Reconcile your statement with your ledger",
+  );
 });
 
 test("@regression: all public routes have no serious Axe findings in light or dark", async ({

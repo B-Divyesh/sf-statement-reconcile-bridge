@@ -98,13 +98,56 @@ function splitCsv(line: string) {
   out.push(cell.trim());
   return out;
 }
-function parseDate(value: string) {
-  const d = new Date(value);
-  if (Number.isNaN(d.getTime()))
-    throw new Error(
-      `Could not read date “${value}”. Use ISO or a standard bank CSV date.`,
+function calendarDate(
+  year: number,
+  month: number,
+  day: number,
+  unreadable: string,
+) {
+  const date = new Date(Date.UTC(year, month - 1, day));
+  if (
+    !Number.isInteger(year) ||
+    !Number.isInteger(month) ||
+    !Number.isInteger(day) ||
+    date.getUTCFullYear() !== year ||
+    date.getUTCMonth() !== month - 1 ||
+    date.getUTCDate() !== day
+  )
+    throw new Error(unreadable);
+  return date.toISOString().slice(0, 10);
+}
+
+function parseNumericDate(value: string, unreadable: string) {
+  const raw = value.trim();
+  const iso = raw.match(/^(\d{4})[-/.](\d{1,2})[-/.](\d{1,2})$/);
+  if (iso)
+    return calendarDate(
+      Number(iso[1]),
+      Number(iso[2]),
+      Number(iso[3]),
+      unreadable,
     );
-  return d.toISOString().slice(0, 10);
+
+  const monthFirst = raw.match(/^(\d{1,2})[-/.](\d{1,2})[-/.](\d{2}|\d{4})$/);
+  if (!monthFirst) throw new Error(unreadable);
+  const abbreviatedYear = Number(monthFirst[3]);
+  const year =
+    monthFirst[3].length === 2
+      ? abbreviatedYear + (abbreviatedYear >= 70 ? 1900 : 2000)
+      : abbreviatedYear;
+  return calendarDate(
+    year,
+    Number(monthFirst[1]),
+    Number(monthFirst[2]),
+    unreadable,
+  );
+}
+
+function parseCsvDate(value: string, row: number) {
+  return parseNumericDate(
+    value,
+    `Row ${row} has an unreadable date. Use YYYY-MM-DD or MM/DD/YYYY.`,
+  );
 }
 function parseOfxDate(value: string, index: number) {
   const raw = value.slice(0, 8);
@@ -113,14 +156,12 @@ function parseOfxDate(value: string, index: number) {
   const year = Number(raw.slice(0, 4)),
     month = Number(raw.slice(4, 6)),
     day = Number(raw.slice(6, 8));
-  const date = new Date(Date.UTC(year, month - 1, day));
-  if (
-    date.getUTCFullYear() !== year ||
-    date.getUTCMonth() !== month - 1 ||
-    date.getUTCDate() !== day
-  )
-    throw new Error(`OFX transaction ${index} has an unreadable date.`);
-  return date.toISOString().slice(0, 10);
+  return calendarDate(
+    year,
+    month,
+    day,
+    `OFX transaction ${index} has an unreadable date.`,
+  );
 }
 export function parseCsv(
   text: string,
@@ -156,7 +197,7 @@ export function parseCsv(
       throw new Error(`Row ${i + 2} has an unreadable amount.`);
     return {
       id: `${source}-${Date.now()}-${i}`,
-      date: parseDate(c[dateI]),
+      date: parseCsvDate(c[dateI] || "", i + 2),
       payee: c[payeeI] || "Unlabelled transaction",
       amount,
       source,
@@ -204,13 +245,13 @@ export function parseQif(
     const amount = Number(v("T").replace(/[$,]/g, ""));
     if (!Number.isFinite(amount))
       throw new Error(`QIF transaction ${i + 1} has an unreadable amount.`);
-    const raw = v("D").replace(/'/g, "/");
-    const d = new Date(raw);
-    if (Number.isNaN(d.getTime()))
-      throw new Error(`QIF transaction ${i + 1} has an unreadable date.`);
+    const date = parseNumericDate(
+      v("D").replace(/'/g, "/"),
+      `QIF transaction ${i + 1} has an unreadable date.`,
+    );
     return {
       id: `${source}-${Date.now()}-${i}`,
-      date: d.toISOString().slice(0, 10),
+      date,
       payee: v("P") || v("M") || "Unlabelled transaction",
       amount,
       source,

@@ -27,9 +27,19 @@ let noticeKind: NoticeKind = "status";
 let updateReady = false;
 let registration: ServiceWorkerRegistration | undefined;
 let applyingUpdate = false;
+const siteOrigin = "https://statement-reconcile-bridge.sociobot.in";
+
+type RouteMetadata = {
+  title: string;
+  description: string;
+  canonicalPath: string;
+};
 
 function isDemoRoute() {
-  return location.pathname === "/demo" || location.search.includes("demo=1");
+  return (
+    location.pathname === "/demo" ||
+    new URLSearchParams(location.search).get("demo") === "1"
+  );
 }
 function storageRoot() {
   return isDemoRoute()
@@ -104,12 +114,66 @@ function esc(value: string) {
       ]!,
   );
 }
-function routeTitle(path: string) {
-  if (path === "/privacy") return "Privacy — Statement Reconcile Bridge";
-  if (path === "/terms") return "Terms — Statement Reconcile Bridge";
-  if (isDemoRoute()) return "Demo — Statement Reconcile Bridge";
-  if (path === "/work") return "Reconcile files — Statement Reconcile Bridge";
-  return "Statement Reconcile Bridge — Reconcile statement files";
+function routeMetadata(path: string): RouteMetadata {
+  if (isDemoRoute())
+    return {
+      title: "Demo — Statement Reconcile Bridge",
+      description: "Try statement reconciliation with isolated sample data.",
+      canonicalPath: "/demo",
+    };
+  if (path === "/privacy")
+    return {
+      title: "Privacy — Statement Reconcile Bridge",
+      description:
+        "How Statement Reconcile Bridge keeps transaction files local.",
+      canonicalPath: "/privacy",
+    };
+  if (path === "/terms")
+    return {
+      title: "Terms — Statement Reconcile Bridge",
+      description: "Terms for using Statement Reconcile Bridge.",
+      canonicalPath: "/terms",
+    };
+  if (path === "/work")
+    return {
+      title: "Reconcile files — Statement Reconcile Bridge",
+      description: "Import and reconcile private statement and ledger files.",
+      canonicalPath: "/work",
+    };
+  if (path !== "/")
+    return {
+      title: "Not found — Statement Reconcile Bridge",
+      description: "Page not found in Statement Reconcile Bridge.",
+      canonicalPath: "/404",
+    };
+  return {
+    title: "Statement Reconcile Bridge — Reconcile statement files",
+    description:
+      "Reconcile a bank statement with your private ledger, without a bank login.",
+    canonicalPath: "/",
+  };
+}
+function setRouteMetadata(path: string) {
+  const metadata = routeMetadata(path);
+  document.title = metadata.title;
+  document
+    .querySelector('meta[name="description"]')
+    ?.setAttribute("content", metadata.description);
+  document
+    .querySelector('link[rel="canonical"]')
+    ?.setAttribute("href", `${siteOrigin}${metadata.canonicalPath}`);
+  for (const selector of [
+    'meta[property="og:title"]',
+    'meta[name="twitter:title"]',
+  ])
+    document.querySelector(selector)?.setAttribute("content", metadata.title);
+  for (const selector of [
+    'meta[property="og:description"]',
+    'meta[name="twitter:description"]',
+  ])
+    document
+      .querySelector(selector)
+      ?.setAttribute("content", metadata.description);
 }
 function nav(path: string) {
   if (activeRoot.startsWith("demo:") && !path.startsWith("/demo"))
@@ -157,13 +221,14 @@ function filePicker(
 }
 function workspace() {
   const ready = state.statement.length && state.ledger.length;
+  const demo = activeRoot.startsWith("demo:");
   const high = state.matches.filter((m) => m.status === "accepted").length,
     review = state.matches.filter((m) => m.status === "suggested").length,
     unmatched = state.matches.filter(
       (m) => m.status === "unmatched" || m.status === "rejected",
     ).length;
   return shell(
-    `<main id="main" class="workspace"><section class="workhead"><div><p class="eyebrow">${activeRoot.startsWith("demo:") ? "Sample reconciliation" : "Your local reconciliation"}</p><h1 tabindex="-1">Review statement matches</h1><p>${ready ? `${state.statement.length} statement rows and ${state.ledger.length} ledger rows are loaded.` : "Add both files to create a review queue."}</p></div><button class="ghost" data-action="clear">Clear files</button></section>${message()}${!ready ? `<section class="import-grid" aria-label="Import files">${filePicker("statement", "1. Add bank statement", "text/csv,.csv,.ofx,.qfx,.qif")}${filePicker("ledger", "2. Add ledger CSV", "text/csv,.csv")}</section><p class="help" id="import-help">Expected CSV columns: date, payee or description, and amount. Debit and credit columns also work.</p>` : `<section class="summary" aria-label="Match summary"><div><b>${high}</b><span>accepted</span></div><div><b>${review}</b><span>to review</span></div><div><b>${unmatched}</b><span>unmatched</span></div><div><b>${Math.round((high / state.matches.length) * 100)}%</b><span>reviewed</span></div></section><section class="rules"><div><h2>Custom cleanup rule</h2><p>Replace one recurring payee phrase before matching. Rules stay in this browser.</p></div><label>Bank wording<input id="rule-find" aria-describedby="app-message" placeholder="e.g. POS GREENMART" /></label><label>Ledger wording<input id="rule-replace" aria-describedby="app-message" placeholder="e.g. Greenmart" /></label><button data-action="rule">Save rule</button>${state.rules.length ? `<p class="rule-list">Saved: ${state.rules.map((r) => `${esc(r.find)} → ${esc(r.replace)}`).join(" · ")}</p>` : ""}</section><section class="toolbar"><p>Accept or reject each suggestion. Exports include accepted rows only.</p><span><button class="ghost" data-action="audit">Export audit report</button><button class="primary" data-action="csv">Export reviewed CSV</button></span></section><section class="match-list" aria-label="Reconciliation review">${state.matches.map(matchRow).join("")}</section>`}</main>`,
+    `<main id="main" class="workspace"><section class="workhead"><div><p class="eyebrow">${demo ? "Sample reconciliation" : "Your local reconciliation"}</p><h1 tabindex="-1">Review statement matches</h1><p>${ready ? `${state.statement.length} statement rows and ${state.ledger.length} ledger rows are loaded.` : "Add both files to create a review queue."}</p></div>${demo ? "" : '<button class="ghost" data-action="clear">Clear files</button>'}</section>${message()}${!ready ? `<section class="import-grid" aria-label="Import files">${filePicker("statement", "1. Add bank statement", "text/csv,.csv,.ofx,.qfx,.qif")}${filePicker("ledger", "2. Add ledger CSV", "text/csv,.csv")}</section><p class="help" id="import-help">Expected CSV columns: date, payee or description, and amount. Debit and credit columns also work.</p>` : `<section class="summary" aria-label="Match summary"><div><b>${high}</b><span>accepted</span></div><div><b>${review}</b><span>to review</span></div><div><b>${unmatched}</b><span>unmatched</span></div><div><b>${Math.round((high / state.matches.length) * 100)}%</b><span>reviewed</span></div></section><section class="rules"><div><h2>Custom cleanup rule</h2><p>Replace one recurring payee phrase before matching. Rules stay in this browser.</p></div><label>Bank wording<input id="rule-find" aria-describedby="app-message" placeholder="e.g. POS GREENMART" /></label><label>Ledger wording<input id="rule-replace" aria-describedby="app-message" placeholder="e.g. Greenmart" /></label><button data-action="rule">Save rule</button>${state.rules.length ? `<p class="rule-list">Saved: ${state.rules.map((r) => `${esc(r.find)} → ${esc(r.replace)}`).join(" · ")}</p>` : ""}</section><section class="toolbar"><p>Accept or reject each suggestion. Exports include accepted rows only.</p><span><button class="ghost" data-action="audit">Export audit report</button><button class="primary" data-action="csv">Export reviewed CSV</button></span></section><section class="match-list" aria-label="Reconciliation review">${state.matches.map(matchRow).join("")}</section>`}</main>`,
   );
 }
 function matchRow(m: Match) {
@@ -185,7 +250,7 @@ function notFound() {
 function render(options: { routeChange?: boolean; focusMatch?: string } = {}) {
   syncRouteState();
   const path = location.pathname;
-  document.title = routeTitle(path);
+  setRouteMetadata(path);
   app.innerHTML =
     path === "/privacy"
       ? legal("privacy")
