@@ -11,7 +11,7 @@
     "claim": "Sample data uses a separate demo namespace that is removed on exit.",
     "where": "Landing action, demo banner, privacy page",
     "test": "npm test -- --grep @claim:demo-isolation",
-    "sandbox": "Fresh landing visit, demo transition, then header exit"
+    "sandbox": "Fresh landing visit; accept sample; leave by Back and address-bar navigation; return and assert reset; preserve a real sentinel"
   },
   {
     "id": "free-core-job",

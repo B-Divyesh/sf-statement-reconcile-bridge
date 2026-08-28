@@ -1,1 +1,1 @@
-Reconcile statement and ledger files locally, review each match, and export reviewed rows.
+Reconcile bank statements with a private ledger, review matches, and export approved rows.

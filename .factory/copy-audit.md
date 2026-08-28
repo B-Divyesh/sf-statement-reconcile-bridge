@@ -7,45 +7,45 @@ every action names its result.
 
 ## Landing page
 
-| Copy                                                                             | Words | Check                                         |
-| -------------------------------------------------------------------------------- | ----: | --------------------------------------------- |
-| Skip to main content                                                             |     4 | Clear skip link                               |
-| Statement Bridge                                                                 |     2 | Product wordmark                              |
-| Reconcile files                                                                  |     2 | Clear navigation action                       |
-| Demo                                                                             |     1 | Clear navigation label                        |
-| Privacy                                                                          |     1 | Clear navigation and footer label             |
-| Private file-to-file reconciliation                                              |     3 | Descriptive eyebrow                           |
-| Reconcile your statement with your ledger                                        |     6 | Clear job headline                            |
-| For people with a private budget file who need to check a monthly bank download. |    15 | Clear audience and situation                  |
-| Try it with sample data                                                          |     5 | Result-naming primary action                  |
-| See suggested matches right away.                                                |     5 | `sample-reconcile`                            |
-| Start with your files                                                            |     4 | Result-naming real-work action                |
-| Files stay in this browser.                                                      |     5 | `local-only`                                  |
-| Works offline after the first visit.                                             |     6 | `offline-reload`                              |
-| Free for the full reconciliation job.                                            |     6 | `free-core-job`                               |
-| Three steps                                                                      |     2 | Clear section label                           |
-| Move through a monthly statement                                                 |     5 | Procedural section heading                    |
-| Import files                                                                     |     2 | Clear step heading                            |
-| Add a bank CSV, OFX, or QIF and your ledger CSV.                                 |    11 | `statement-file-formats`                      |
-| Review suggestions                                                               |     2 | Clear step heading                            |
-| See one-to-one matches with the reason for each score.                           |     9 | `one-to-one-matching`, `match-score-reasons`  |
-| Export reviewed rows                                                             |     3 | Clear step heading                            |
-| Hand approved rows and an audit report back to your ledger.                      |    11 | `csv-export`, `audit-export`, `manual-review` |
-| Local cleanup rules                                                              |     3 | Clear section label                           |
-| Save recurring payee wording                                                     |     4 | Clear section heading                         |
-| Keep bank wording and ledger wording aligned before you review suggestions.      |    11 | `cleanup-rule-matching`                       |
-| Set a cleanup rule                                                               |     4 | Result-naming action                          |
-| No bank login.                                                                   |     3 | `no-bank-login`                               |
-| No budget advice.                                                                |     3 | `no-budget-advice`                            |
-| This is a bridge between files you already control.                              |     9 | Useful scope limit                            |
-| Matches are suggestions.                                                         |     3 | `manual-review`                               |
-| You make the final call.                                                         |     5 | `manual-review`                               |
-| Read the privacy terms                                                           |     4 | Result-naming action                          |
-| Reconcile statement files without changing your ledger.                          |     7 | `input-files-unchanged`                       |
-| Terms                                                                            |     1 | Clear footer link                             |
-| Built by Param Factory                                                           |     4 | Attribution                                   |
-| v1.2.0                                                                           |     1 | Build label                                   |
-| Original illustration generated for this product.                                |     6 | Asset provenance                              |
+| Copy                                                                        | Words | Check                                         |
+| --------------------------------------------------------------------------- | ----: | --------------------------------------------- |
+| Skip to main content                                                        |     4 | Clear skip link                               |
+| Statement Bridge                                                            |     2 | Product wordmark                              |
+| Reconcile files                                                             |     2 | Clear navigation action                       |
+| Demo                                                                        |     1 | Clear navigation label                        |
+| Privacy                                                                     |     1 | Clear navigation and footer label             |
+| Private file-to-file reconciliation                                         |     3 | Descriptive eyebrow                           |
+| Reconcile your statement with your ledger                                   |     6 | Clear job headline                            |
+| For people with a private ledger who need to check a monthly bank download. |    14 | Clear audience and situation                  |
+| Try it with sample data                                                     |     5 | Result-naming primary action                  |
+| See suggested matches right away.                                           |     5 | `sample-reconcile`                            |
+| Start with your files                                                       |     4 | Result-naming real-work action                |
+| Files stay in this browser.                                                 |     5 | `local-only`                                  |
+| Works offline after the first visit.                                        |     6 | `offline-reload`                              |
+| Free for the full reconciliation job.                                       |     6 | `free-core-job`                               |
+| Three steps                                                                 |     2 | Clear section label                           |
+| Reconcile files in three steps                                              |     5 | Job-specific section heading                  |
+| Import files                                                                |     2 | Clear step heading                            |
+| Add a bank CSV, OFX, or QIF and your ledger CSV.                            |    11 | `statement-file-formats`                      |
+| Review suggestions                                                          |     2 | Clear step heading                            |
+| See one-to-one matches with the reason for each score.                      |     9 | `one-to-one-matching`, `match-score-reasons`  |
+| Export reviewed rows                                                        |     3 | Clear step heading                            |
+| Hand approved rows and an audit report back to your ledger.                 |    11 | `csv-export`, `audit-export`, `manual-review` |
+| Local cleanup rules                                                         |     3 | Clear section label                           |
+| Save recurring payee wording                                                |     4 | Clear section heading                         |
+| Keep bank wording and ledger wording aligned before you review suggestions. |    11 | `cleanup-rule-matching`                       |
+| Set a cleanup rule                                                          |     4 | Result-naming action                          |
+| No bank login.                                                              |     3 | `no-bank-login`                               |
+| No budget advice.                                                           |     3 | `no-budget-advice`                            |
+| It compares the statement and ledger files you choose.                      |     9 | Concrete scope limit                          |
+| Matches are suggestions.                                                    |     3 | `manual-review`                               |
+| You make the final call.                                                    |     5 | `manual-review`                               |
+| Read the privacy details                                                    |     4 | Names the linked document                     |
+| Reconcile statement files without changing your ledger.                     |     7 | `input-files-unchanged`                       |
+| Terms                                                                       |     1 | Clear footer link                             |
+| Built by Param Factory                                                      |     4 | Attribution                                   |
+| v1.2.0                                                                      |     1 | Build label                                   |
+| Original illustration generated for this product.                           |     6 | Asset provenance                              |
 
 ## README
 
@@ -53,7 +53,7 @@ every action names its result.
 | ----------------------------------------------------------------------------------------------------------------------------------------------------- | ----: | ------------------------------------------- |
 | Statement Reconcile Bridge                                                                                                                            |     3 | Clear title                                 |
 | Reconcile a downloaded bank statement with a private ledger without a bank login.                                                                     |    13 | `no-bank-login`                             |
-| It is for people with a spreadsheet or local CSV who need a monthly handoff tool, not another budget app.                                             |    20 | Clear audience                              |
+| It is for people who compare a monthly bank download with a spreadsheet or ledger CSV.                                                                |    16 | Clear audience                              |
 | The app reads CSV, OFX/QFX, and QIF statement files plus a ledger CSV.                                                                                |    13 | `statement-file-formats`                    |
 | It proposes one-to-one exact-cent matches.                                                                                                            |     5 | `one-to-one-matching`                       |
 | Review each match.                                                                                                                                    |     3 | `manual-review`                             |

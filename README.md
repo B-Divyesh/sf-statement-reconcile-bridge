@@ -1,8 +1,8 @@
 # Statement Reconcile Bridge
 
 Reconcile a downloaded bank statement with a private ledger without a bank
-login. It is for people with a spreadsheet or local CSV who need a monthly
-handoff tool, not another budget app.
+login. It is for people who compare a monthly bank download with a spreadsheet
+or ledger CSV.
 
 The app reads CSV, OFX/QFX, and QIF statement files plus a ledger CSV. It
 proposes one-to-one exact-cent matches. Review each match. Export accepted rows

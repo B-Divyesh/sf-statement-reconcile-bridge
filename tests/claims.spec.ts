@@ -81,6 +81,32 @@ test("@claim:demo-isolation enters and leaves an isolated sample namespace", asy
       localStorage.getItem("real:statement-reconcile-bridge:sentinel"),
     ),
   ).toBe("untouched");
+  await page.goto("/work");
+  let keys = await page.evaluate(() => Object.keys(localStorage));
+  expect(
+    keys.some((key) => key.startsWith("demo:statement-reconcile-bridge:")),
+  ).toBeFalsy();
+  expect(
+    await page.evaluate(() =>
+      localStorage.getItem("real:statement-reconcile-bridge:sentinel"),
+    ),
+  ).toBe("untouched");
+
+  await page.goto("/");
+  await page.getByRole("button", { name: "Try it with sample data" }).click();
+  await expect(page).toHaveURL(/\/demo$/);
+  await page.getByRole("button", { name: "Accept" }).first().click();
+  await expect(page.locator(".match.accepted")).toHaveCount(1);
+  await page.goBack();
+  await expect(page).toHaveURL(/\/$/);
+  keys = await page.evaluate(() => Object.keys(localStorage));
+  expect(
+    keys.some((key) => key.startsWith("demo:statement-reconcile-bridge:")),
+  ).toBeFalsy();
+  await page.goForward();
+  await expect(page).toHaveURL(/\/demo$/);
+  await expect(page.locator(".match.accepted")).toHaveCount(0);
+
   await page.getByRole("button", { name: "Reset demo" }).click();
   await expect(page.locator(".match.accepted")).toHaveCount(0);
   expect(
@@ -101,7 +127,7 @@ test("@claim:demo-isolation enters and leaves an isolated sample namespace", asy
   await expect(
     page.getByText("Demo — sample data, nothing is saved"),
   ).toHaveCount(0);
-  let keys = await page.evaluate(() => Object.keys(localStorage));
+  keys = await page.evaluate(() => Object.keys(localStorage));
   expect(
     keys.some((key) => key.startsWith("demo:statement-reconcile-bridge:")),
   ).toBeFalsy();
@@ -536,7 +562,7 @@ test("@regression: mobile and desktop first screens, touch targets, and keyboard
       name: "Reconcile your statement with your ledger",
     }),
     page.getByText(
-      "For people with a private budget file who need to check a monthly bank download.",
+      "For people with a private ledger who need to check a monthly bank download.",
     ),
     page.getByRole("button", { name: "Try it with sample data" }),
   ]) {
@@ -552,6 +578,12 @@ test("@regression: mobile and desktop first screens, touch targets, and keyboard
   await expect(
     page.getByRole("heading", { name: "Review statement matches" }),
   ).toBeFocused();
+  const firstMatch = page.locator(".match").first();
+  await expect(firstMatch).toContainText("Oak & Reed Coffee");
+  await expect(firstMatch).toContainText("Oak Reed Coffee");
+  const firstMatchBox = await firstMatch.boundingBox();
+  expect(firstMatchBox).not.toBeNull();
+  expect(firstMatchBox!.y + firstMatchBox!.height).toBeLessThanOrEqual(844);
   const accept = page.getByRole("button", { name: "Accept" }).first();
   await accept.focus();
   await page.keyboard.press("Enter");
@@ -701,8 +733,14 @@ test("@regression: workspace markup and route metadata are complete", async ({
 
 test("@regression: copy audit is complete for reviewed landing copy and has accurate counts", () => {
   const audit = readFileSync(".factory/copy-audit.md", "utf8");
+  const catalog = readFileSync(
+    ".factory/catalog-description.txt",
+    "utf8",
+  ).trim();
   const landing = audit.split("## Landing page")[1]?.split("## README")[0];
   expect(landing).toBeTruthy();
+  expect(catalog.length).toBeLessThanOrEqual(120);
+  expect(catalog).toMatch(/^Reconcile\b/);
 
   const rows = new Map(
     landing!
@@ -727,10 +765,20 @@ test("@regression: copy audit is complete for reviewed landing copy and has accu
   for (const copy of [
     "Try it with sample data",
     "Three steps",
+    "Reconcile files in three steps",
     "Import files",
     "Review suggestions",
     "Export reviewed rows",
-    "Read the privacy terms",
+    "Read the privacy details",
   ])
     expect(rows.has(copy), `${copy} is audited`).toBeTruthy();
+
+  for (const removedCopy of [
+    "private budget file",
+    "Move through a monthly statement",
+    "This is a bridge between files you already control.",
+    "Read the privacy terms",
+    "monthly handoff tool",
+  ])
+    expect(audit, `${removedCopy} was removed`).not.toContain(removedCopy);
 });

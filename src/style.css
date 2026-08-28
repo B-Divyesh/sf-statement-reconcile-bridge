@@ -405,6 +405,12 @@ footer small {
 .match-list {
   border-top: 2px solid var(--ink);
 }
+.demo-first-match {
+  margin-top: 18px;
+}
+.demo-more-matches {
+  margin-top: 18px;
+}
 .match {
   display: grid;
   grid-template-columns: 90px 1fr 28px 1fr minmax(180px, 0.85fr) auto;
