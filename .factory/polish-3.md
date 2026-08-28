@@ -52,13 +52,15 @@ not a documentation-only closure.
 
 ## Evidence summary
 
-- Fresh locked install: `npm ci` installed 22 packages with zero vulnerabilities.
+- Fresh remote clone: `git clone --depth 1` into `/tmp/srb-clean-Sa3tnA/repo`,
+  then `npm ci` installed 22 packages with zero vulnerabilities.
 - Each of the 17 exact commands in `.factory/claims.json` was executed from that
   clean install. The aggregate command `npm test -- --grep @claim --workers=4`
   then passed 17/17.
-- `npm run typecheck`, `npm run lint`, `npm test` (22/22), and `npm run build`
-  passed. The production bundle is 21.64 kB JavaScript (8.10 kB gzip), 11.01
-  kB CSS (3.25 kB gzip), and 89.38 kB product-owned hero WebP.
+- In that fresh clone, `npm run typecheck`, `npm run lint`, `npm test` (22/22),
+  and `npm run build` passed. The production bundle is 21.64 kB JavaScript
+  (8.10 kB gzip), 11.01 kB CSS (3.25 kB gzip), and 89.38 kB product-owned hero
+  WebP.
 - `/opt/fleet/lib/verify-url.sh` passed locally and cold against the live home;
   evidence is in `/tmp/srb-polish-3/local-verify/` and
   `/tmp/srb-polish-3/live-verify/`.

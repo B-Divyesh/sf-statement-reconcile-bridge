@@ -34,9 +34,10 @@ npm run build
 ```
 
 The exact 17 claim commands listed in `.factory/claims.json` were also run
-individually from the clean install. They all passed. The complete Playwright
-suite passed 22/22. `npm run build` produced `dist/` with 21.64 kB JavaScript
-(8.10 kB gzip), 11.01 kB CSS (3.25 kB gzip), and an 89.38 kB hero WebP.
+individually from a fresh remote clone at `/tmp/srb-clean-Sa3tnA/repo` after
+`npm ci`. They all passed. In that clone, the complete Playwright suite passed
+22/22 and `npm run build` produced `dist/` with 21.64 kB JavaScript (8.10 kB
+gzip), 11.01 kB CSS (3.25 kB gzip), and an 89.38 kB hero WebP.
 
 Local `verify-url.sh` passed with title, `lang`, one H1, a main landmark, alt
 text, labels, and no load errors. Playwright Axe found zero serious or critical
