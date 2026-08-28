@@ -104,3 +104,28 @@ a static, local-first PWA with the original concrete-and-moss visual system.
 
 None found in the repaired scope. Synthetic Lighthouse does not report field
 INP; interaction tests exercise the review controls directly.
+
+---
+
+# Independent verification 3 handoff — PASS
+
+Candidate `05e047f2c8f86c2e36d955898d962c1cfa726cc7` is verified at
+https://statement-reconcile-bridge.sociobot.in and **PASS**es release QA.
+
+- From a clean checkout: `npm ci`, every one of the 18 exact claim commands,
+  `npm test` (22 tests), `npm run typecheck`, `npm run lint`, and `npm run
+build` all passed. `dist/` was produced.
+- The live deployment hashes exactly match the candidate build (main JS, CSS,
+  service worker, and manifest). Live Lighthouse mobile was 96 performance,
+  100 accessibility, 100 best practices, and 100 SEO.
+- The live PWA passed 390 px first-read, desktop/mobile visual, keyboard,
+  reduced-motion, dual-theme Axe, privacy-network, offline reload, and
+  controlled worker-update checks. It imports the promised formats, keeps exact
+  cents and one-to-one matching, requires explicit review before export, and
+  rejects malformed OFX dates.
+- License verification is rate limited after 30 requests; 429 responses carried
+  `Retry-After: 4`. There is no sign-in or product backend beyond that billing
+  endpoint.
+
+See `.factory/verification-3.md` for commands, observed behavior, hashes, and
+full evidence. No known release-blocking gaps remain.
