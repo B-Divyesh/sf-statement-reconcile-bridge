@@ -1,3 +1,43 @@
+# Review 1 handoff — FAIL
+
+## What was done
+
+Completed the requested adversarial first-read review of the live product
+without changing product code. Wrote the detailed report in
+`.factory/review-1.md`.
+
+## Verification run
+
+- Fresh `npm ci` succeeded with no reported vulnerabilities.
+- Every one of the 18 exact claim commands declared in `.factory/claims.json`
+  completed successfully.
+- `npm test` passed 22/22. `npm run typecheck`, `npm run lint`, and
+  `npm run build` passed; `dist/` was produced.
+- Fresh desktop and 390px live contexts verified the first read, demo banner,
+  sample rows, reset, demo storage separation, exit cleanup, no console
+  errors, and offline demo reload.
+- `verify-url.sh` passed against the live landing page. Internal links and
+  public routes were crawled; a missing route correctly returned the designed
+  HTTP 404.
+
+## Result and known gaps
+
+The review **FAILS** because the live **Buy custom rules — $19** destination
+returns HTTP 404 (`{"error":"enabled factory product","status":404}`). The
+purchase path is therefore not end to end. The report also records two
+overlong README sentences, two unlisted README claims, and incomplete 404
+social/icon metadata. No product-source files were modified.
+
+## Next steps
+
+1. Provision/correct the Sociobot checkout URL and add a browser claim that
+   follows it successfully.
+2. Apply the specific README rewrites and claim inventory/test changes in
+   `review-1.md`.
+3. Complete 404 metadata, then rerun the whole review checklist.
+
+---
+
 # Repair handoff
 
 ## Result
