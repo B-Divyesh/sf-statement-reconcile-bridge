@@ -5,14 +5,13 @@ login. It is for people who already keep a spreadsheet or local CSV and want a
 small monthly handoff tool instead of another budget app.
 
 The app reads CSV, OFX/QFX, and QIF statement files plus a ledger CSV. It
-normalizes payee text, proposes one-to-one matches, lets you review exceptions,
+normalizes payee text, proposes one-to-one exact-cent matches, lets you review every match,
 and exports accepted rows plus a JSON audit report. Files stay in browser
 storage and are never sent to a server.
 
 The complete reconciliation flow is free. A $19 one-time optional license
-unlocks saved custom cleanup rules for recurring bank wording. Checkout and
-license verification use the Sociobot billing service; payment details never
-enter this app.
+unlocks saved custom cleanup rules for recurring bank wording. Sociobot and
+Dodo handle payment and refunds. Payment details never enter this app.
 
 ## Run it
 
@@ -30,6 +29,8 @@ the service worker stores the app shell.
 
 ```sh
 npm test
+npm run typecheck
+npm run lint
 npm run build
 ```
 

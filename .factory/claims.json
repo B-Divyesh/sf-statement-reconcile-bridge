@@ -1,15 +1,128 @@
 [
-  {"id":"sample-reconcile","claim":"The demo shows 10 statement rows matched against 11 ledger rows.","where":"Demo workspace","test":"npm test -- --grep @claim:sample-reconcile","sandbox":"Fresh /demo visit"},
-  {"id":"demo-isolation","claim":"Try it with sample data uses a separate demo browser-storage namespace.","where":"Landing primary action, demo banner, privacy page","test":"npm test -- --grep @claim:demo-isolation","sandbox":"Fresh landing-page visit and primary-action transition"},
-  {"id":"free-core-job","claim":"The free app imports a statement and ledger, creates a review queue, and exports reviewed rows.","where":"Landing facts, workbench","test":"npm test -- --grep @claim:free-core-job","sandbox":"Fresh /demo then Start for real, with two CSV fixtures"},
-  {"id":"statement-file-formats","claim":"Imports CSV, OFX/QFX, and QIF statement files plus a ledger CSV.","where":"Landing steps, workbench importer, README","test":"npm test -- --grep @claim:statement-file-formats","sandbox":"Fresh real workspace with OFX and QIF fixtures"},
-  {"id":"one-to-one-matching","claim":"Suggests one-to-one statement and ledger matches.","where":"Landing steps, README","test":"npm test -- --grep @claim:one-to-one-matching","sandbox":"Fresh real workspace with two same-value statements and one ledger row"},
-  {"id":"csv-export","claim":"Exports accepted reviewed rows as CSV.","where":"Workbench, README","test":"npm test -- --grep @claim:csv-export","sandbox":"Fresh /demo visit"},
-  {"id":"audit-export","claim":"Exports a JSON audit report.","where":"Landing steps, workbench, README","test":"npm test -- --grep @claim:audit-export","sandbox":"Fresh /demo visit"},
-  {"id":"local-only","claim":"Files stay in this browser during the demo flow.","where":"Landing facts, privacy page, README","test":"npm test -- --grep @claim:local-only","sandbox":"Fresh /demo visit with complete network capture"},
-  {"id":"no-bank-login","claim":"Does not ask for a bank login.","where":"Landing privacy section, README","test":"npm test -- --grep @claim:no-bank-login","sandbox":"Fresh real-workspace and landing visits"},
-  {"id":"offline-reload","claim":"Works offline after the first visit.","where":"Landing facts, README","test":"npm test -- --grep @claim:offline-reload","sandbox":"Fresh /demo visit, service-worker ready, then offline reload"},
-  {"id":"paid-license","claim":"A $19 one-time custom-rules license can be restored and verified with Sociobot billing.","where":"Landing paid section, README","test":"npm test -- --grep @claim:paid-license","sandbox":"Fresh landing visit with a recorded invalid billing response"},
-  {"id":"one-time-price","claim":"Custom cleanup rules cost $19 once.","where":"Landing paid section, README","test":"npm test -- --grep @claim:one-time-price","sandbox":"Fresh landing visit"},
-  {"id":"no-budget-advice","claim":"Does not provide budget advice.","where":"Landing privacy section, README","test":"npm test -- --grep @claim:no-budget-advice","sandbox":"Fresh landing visit"}
+  {
+    "id": "sample-reconcile",
+    "claim": "The demo shows 10 statement rows against 11 ledger rows as suggestions.",
+    "where": "Demo workspace",
+    "test": "npm test -- --grep @claim:sample-reconcile",
+    "sandbox": "Fresh /demo visit"
+  },
+  {
+    "id": "demo-isolation",
+    "claim": "Sample data uses a separate demo namespace that is removed on exit.",
+    "where": "Landing action, demo banner, privacy page",
+    "test": "npm test -- --grep @claim:demo-isolation",
+    "sandbox": "Fresh landing visit, demo transition, then header exit"
+  },
+  {
+    "id": "free-core-job",
+    "claim": "The free app imports, reviews, and exports a reconciliation.",
+    "where": "Landing facts, workbench, README",
+    "test": "npm test -- --grep @claim:free-core-job",
+    "sandbox": "Fresh /work visit with two CSV fixtures"
+  },
+  {
+    "id": "statement-file-formats",
+    "claim": "Imports CSV debit/credit columns, OFX/QFX, and QIF statements plus ledger CSV.",
+    "where": "Landing, importer, README",
+    "test": "npm test -- --grep @claim:statement-file-formats",
+    "sandbox": "Fresh /work visits with bundled in-test fixtures"
+  },
+  {
+    "id": "one-to-one-matching",
+    "claim": "Suggests one-to-one matches only when amounts agree to the exact cent.",
+    "where": "Landing steps, workbench, README",
+    "test": "npm test -- --grep @claim:one-to-one-matching",
+    "sandbox": "Duplicate-row and one-cent-mismatch fixtures"
+  },
+  {
+    "id": "manual-review",
+    "claim": "Matches remain suggestions until a person accepts them.",
+    "where": "Landing privacy section, workbench, README",
+    "test": "npm test -- --grep @claim:manual-review",
+    "sandbox": "Fresh /demo before and after accept and undo"
+  },
+  {
+    "id": "csv-export",
+    "claim": "Exports only explicitly accepted rows as CSV.",
+    "where": "Workbench, README",
+    "test": "npm test -- --grep @claim:csv-export",
+    "sandbox": "Fresh /demo with one human acceptance"
+  },
+  {
+    "id": "audit-export",
+    "claim": "Exports a JSON audit report containing human review actions.",
+    "where": "Landing steps, workbench, README",
+    "test": "npm test -- --grep @claim:audit-export",
+    "sandbox": "Fresh /demo with one human acceptance"
+  },
+  {
+    "id": "local-only",
+    "claim": "Transaction files stay in the browser during demo and real work.",
+    "where": "Landing facts, privacy page, README",
+    "test": "npm test -- --grep @claim:local-only",
+    "sandbox": "Full demo-to-real import/review/export with network capture"
+  },
+  {
+    "id": "no-bank-login",
+    "claim": "Does not ask for a bank login.",
+    "where": "Landing privacy section, README",
+    "test": "npm test -- --grep @claim:no-bank-login",
+    "sandbox": "Fresh landing and workbench visits"
+  },
+  {
+    "id": "offline-reload",
+    "claim": "Works offline after the first visit.",
+    "where": "Landing facts, README",
+    "test": "npm test -- --grep @claim:offline-reload",
+    "sandbox": "Fresh /demo, service-worker ready, offline reload"
+  },
+  {
+    "id": "paid-license",
+    "claim": "A custom-rules license can be restored through Sociobot billing.",
+    "where": "Landing paid section, README",
+    "test": "npm test -- --grep @claim:paid-license",
+    "sandbox": "Recorded invalid billing response with request assertion"
+  },
+  {
+    "id": "one-time-price",
+    "claim": "Custom cleanup rules cost $19 once.",
+    "where": "Landing paid section, README",
+    "test": "npm test -- --grep @claim:one-time-price",
+    "sandbox": "Fresh landing visit"
+  },
+  {
+    "id": "no-budget-advice",
+    "claim": "Does not provide budget advice.",
+    "where": "Landing privacy section, README",
+    "test": "npm test -- --grep @claim:no-budget-advice",
+    "sandbox": "Fresh landing visit"
+  },
+  {
+    "id": "real-persistence",
+    "claim": "Real imported work survives a browser refresh.",
+    "where": "Privacy page, README",
+    "test": "npm test -- --grep @claim:real-persistence",
+    "sandbox": "Fresh /work import followed by reload"
+  },
+  {
+    "id": "rules-local-only",
+    "claim": "Custom cleanup rules stay in browser storage.",
+    "where": "Paid workbench",
+    "test": "npm test -- --grep @claim:rules-local-only",
+    "sandbox": "Cached fixture license, saved rule, reload, network capture"
+  },
+  {
+    "id": "no-advertising-analytics",
+    "claim": "The app does not use advertising analytics.",
+    "where": "Privacy page",
+    "test": "npm test -- --grep @claim:no-advertising-analytics",
+    "sandbox": "Landing and privacy route network capture"
+  },
+  {
+    "id": "payment-handling",
+    "claim": "Sociobot and Dodo handle payment and refunds; payment details do not enter the app.",
+    "where": "Landing, privacy, terms, README",
+    "test": "npm test -- --grep @claim:payment-handling",
+    "sandbox": "Fresh landing and terms visits; checkout form absence"
+  }
 ]

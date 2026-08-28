@@ -15,7 +15,9 @@ rather than finance-app glossy. It makes review feel finite and accountable.
 - **Rust:** `#a63c22` exceptions and destructive choices.
 - **Pencil:** `#66675f` secondary copy and `#c7c5ba` rules.
 - **Night treatment:** `#1c211d` ground, `#252b24` paper, `#f5f1e6` ink,
-  retaining pale moss as the affirmative signal.
+  `#c5c9bc` secondary copy, and dark `#18371f` banner fields. Pale moss remains
+  an affirmative foreground signal, while paid links use `#355b37` under white
+  text. This avoids reversing pale semantic colors into low-contrast surfaces.
 
 The system uses one-pixel dark rules, hard 2px offsets, square corners, and
 compact status stamps. Spacing follows an 8px rhythm with extra 24px breathing

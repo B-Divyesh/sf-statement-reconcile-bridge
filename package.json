@@ -5,11 +5,15 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc --noEmit && vite build",
+    "typecheck": "tsc --noEmit",
+    "lint": "prettier --check \"src/**/*.{ts,css,json}\" \"tests/**/*.ts\" package.json playwright.config.ts vite.config.ts README.md .factory/claims.json .factory/copy-audit.md .factory/demo.md .factory/design.md .factory/handoff.md",
+    "build": "npm run typecheck && vite build",
     "test": "playwright test"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.10.2",
     "@playwright/test": "1.58.2",
+    "prettier": "^3.3.3",
     "typescript": "^5.7.3",
     "vite": "^6.1.0"
   }

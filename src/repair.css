@@ -1,2 +1,110 @@
 /* Repair pass: visible feedback and 44px compact controls. */
-.demo-banner{min-height:54px}.demo-banner button{min-height:44px;padding:7px 10px}.real-start{display:inline-grid;align-items:center;min-height:44px;font-weight:750}.message{margin:20px 0;padding:12px 14px;border:1px solid var(--moss-dark);background:var(--moss-pale);font-weight:700}.message.error{border-color:var(--rust);background:#f0e5df;color:#642514}.compact{min-height:44px;padding:8px 12px}.row-actions{gap:8px}.update-toast{position:fixed;right:16px;bottom:16px;z-index:5;display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--paper);border:1px solid var(--ink);box-shadow:var(--shadow)}.update-toast button{min-height:44px}
+.demo-banner {
+  min-height: 54px;
+}
+.demo-banner button {
+  min-height: 44px;
+  padding: 7px 10px;
+}
+.real-start {
+  display: inline-grid;
+  align-items: center;
+  min-height: 44px;
+  font-weight: 750;
+}
+.message {
+  margin: 20px 0;
+  padding: 12px 14px;
+  border: 1px solid var(--moss-dark);
+  background: var(--moss-pale);
+  font-weight: 700;
+}
+.message.error {
+  border-color: var(--rust);
+  background: #f0e5df;
+  color: #642514;
+}
+.compact {
+  min-height: 44px;
+  padding: 8px 12px;
+}
+.row-actions {
+  gap: 8px;
+}
+.update-toast {
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  background: var(--paper);
+  border: 1px solid var(--ink);
+  box-shadow: var(--shadow);
+}
+.update-toast button {
+  min-height: 44px;
+}
+
+.lede {
+  color: var(--muted);
+}
+nav a {
+  justify-items: center;
+  min-width: 44px;
+}
+.dropzone input {
+  min-height: 44px;
+}
+.privacy-block > a,
+.legal > a,
+footer a {
+  display: inline-flex;
+  align-items: center;
+  min-width: 44px;
+}
+
+@media (max-width: 780px) {
+  nav {
+    gap: 8px;
+  }
+  .hero {
+    padding-top: 24px;
+  }
+  .hero h1 {
+    font-size: clamp(2.4rem, 11vw, 4rem);
+  }
+  .hero-actions {
+    margin: 20px 0 18px;
+  }
+  .hero figure {
+    order: initial;
+    max-height: 360px;
+    overflow: hidden;
+  }
+  .hero img {
+    height: min(58vw, 340px);
+    aspect-ratio: auto;
+  }
+}
+@media (prefers-color-scheme: dark) {
+  .demo-banner {
+    background: #18371f;
+    color: #fff;
+  }
+  .demo-banner button {
+    color: #fff;
+    border-color: #c6e2b7;
+  }
+  .buy-link {
+    background: #355b37;
+    color: #fff;
+    border-color: #c6e2b7;
+  }
+  .message.error {
+    background: #352824;
+    color: #ffd8cc;
+  }
+}

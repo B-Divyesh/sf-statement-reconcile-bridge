@@ -1,61 +1,68 @@
-# Verification handoff — FAIL
+# Repair handoff
 
 ## Result
 
-**FAIL — do not release candidate
-`cdd19453a98b42d09397628ba897d721640ca68b`.** The deployed product at
-https://statement-reconcile-bridge.sociobot.in matches the candidate, but fresh
-independent QA found release-blocking mobile, reconciliation-integrity,
-accessibility, input-validation, and claims-contract defects.
+All release blockers in independent verification commit
+`e4d2ff42de330d936a041d5dbab73e30c640ef7d` for candidate
+`cdd19453a98b42d09397628ba897d721640ca68b` were repaired. The product remains
+a static, local-first PWA with the original concrete-and-moss visual system.
 
-The complete evidence and reproduction details are in
-`.factory/verification-2.md`. No product source was modified during this
-verification.
+## Repairs
 
-## Main blockers
+- The 390 px layout now places the job, audience, and sample action before a
+  constrained illustration. All visible interactive targets measure at least
+  44 by 44 CSS pixels.
+- Machine matches always begin as suggestions. A person must accept a row
+  before CSV export includes it. Accepted and rejected decisions can be undone,
+  and keyboard focus stays on the same review row.
+- Matching compares integer cents. A `-$10.00` statement no longer pairs with
+  a `-$10.01` ledger row.
+- OFX dates are calendar-validated. Missing amounts and files over 5 MB produce
+  visible, announced errors, and a later valid upload clears the error.
+- Dark-theme banner, paid-link, body-copy, and error colors now meet contrast
+  requirements. Axe checks cover all five public routes in both color schemes.
+- The skip link is the first initial keyboard stop. H1 focus and route
+  announcements happen only after SPA navigation, not after each review action.
+- Leaving demo mode through any navigation deletes both demo keys. The stray
+  `<>` workbench text was removed.
+- The paid section and Terms name Sociobot/Dodo as merchant of record and state
+  that they handle refunds. No payment fields exist in the app.
+- `/work` is in the sitemap. Every HTML entry has route-specific canonical,
+  Open Graph, Twitter, icon, description, and title metadata. The static 404 now
+  uses the shared header/main/footer structure.
+- The 18-entry claim inventory covers debit/credit import, exact-cent one-to-one
+  matching, manual review, real-work persistence, browser-only rules, payment
+  handling, and the absence of advertising analytics. Each claim tag occurs
+  exactly once in the browser suite.
+- Service-worker first install no longer shows a false update notice. A waiting
+  worker still exposes the controlled **Refresh app** action.
 
-- At 390×844 the cold first viewport shows only navigation and a 1,024 px-tall
-  image crop. The headline, audience sentence, and sample CTA are below it; the
-  CTA begins around y=1,535 px.
-- High-confidence matches are automatically finalized as `accepted`, cannot be
-  rejected, and are exported before any review. A `-$10.00` statement row was
-  incorrectly matched and exported against a `-$10.01` ledger row at 95% while
-  described as the “Same amount.”
-- Axe reports serious dark-mode contrast failures as low as 1.4:1.
-- Malformed OFX dates such as `BAD` are accepted and rendered as `BAD--`.
-- Review actions and initial load force focus to the h1, breaking efficient
-  keyboard use and bypassing the skip link.
-- Public claims remain unlisted/untested, and paid merchant/refund disclosures
-  are missing.
+## Verification evidence
 
-## Verification summary
+- Clean install: `npm ci` — 22 packages installed, 23 audited, 0 vulnerabilities.
+- Every exact command in `.factory/claims.json` — 18 of 18 passed separately.
+- Full suite: `npm test` — 22 of 22 passed, including desktop, 390 px mobile,
+  keyboard, dual-theme Axe, privacy-network, offline reload, malformed input,
+  one-cent mismatch, and metadata regressions.
+- Static checks: `npm run typecheck` and `npm run lint` — passed.
+- Production build: `npm run build` — passed and produced `dist/index.html`.
+  Main JS is 22.30 KB (8.47 KB gzip), CSS is 11.13 KB (3.28 KB gzip), and the
+  hero WebP is 89.38 KB.
+- Local `verify-url.sh` — `/`, `/demo`, `/work`, `/privacy`, and `/terms` each
+  returned 200 with the expected title, `lang=en`, one H1, one main landmark,
+  alt text, and no console errors.
+- Local mobile Lighthouse — performance 100, accessibility 100, best practices
+  100, SEO 100; FCP 0.9 s, LCP 1.8 s, TBT 40 ms, CLS 0, total transfer 101 KiB.
+- Controlled two-version service-worker exercise — first install showed no
+  update notice; the next worker waited, **Refresh app** activated it, the old
+  cache was removed, and all 10 demo rows remained after reload.
 
-- Mandatory first-read: desktop PASS; 390 px mobile FAIL.
-- `npm ci`: PASS, 0 vulnerabilities.
-- Every one of 13 exact claim commands: PASS after install.
-- `npm test`: PASS, 15/15.
-- `npm run build`: PASS; `dist/` produced.
-- Live deployment identity: PASS by exact JS, CSS, worker, and manifest hashes.
-- Live Lighthouse mobile: 93 performance, 100 accessibility, 100 best
-  practices, 100 SEO; LCP 1.6 s, CLS 0.
-- Axe across five local and five live routes, light/dark: FAIL in dark mode;
-  serious contrast findings on `/` and `/demo`.
-- Live offline reload: PASS. Simulated service-worker update/activation: PASS.
-- Privacy network capture: PASS for demo and real import/export; only explicit
-  license restore contacts `api.sociobot.in`.
-- Billing rate limit: PASS; a 40-request burst yielded 30×200 and 10×429, with
-  `Retry-After: 4`.
-- Live routes/security/caching/404: PASS. No console or page errors observed.
+## Deployment
 
-## Re-run
+Deployment and final live identity, response-policy, offline, and route checks
+are recorded in the final section below after upload.
 
-```sh
-npm ci
-npm test
-npm run build
-```
+## Known gaps
 
-After repairs, rerun every command in `.factory/claims.json`, then repeat the
-independent amount-mismatch, pre-review export, 390 px first-screen, dark Axe,
-malformed OFX, and keyboard-focus cases documented in
-`.factory/verification-2.md`.
+None found in the repaired scope. Synthetic Lighthouse does not report field
+INP; interaction tests exercise the review controls directly.

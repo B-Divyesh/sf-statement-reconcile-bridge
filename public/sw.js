@@ -1,9 +1,7 @@
-const CACHE = 'statement-bridge-v2';
+const CACHE = 'statement-bridge-v3';
 const SHELL = ['/', '/demo', '/work', '/privacy', '/terms', '/manifest.webmanifest', '/icon.svg', '/icon-192.png', '/icon-512.png'];
 self.addEventListener('install', event => event.waitUntil((async () => {
   await caches.open(CACHE).then(cache => cache.addAll(SHELL));
-  const clients = await self.clients.matchAll({ type: 'window', includeUncontrolled: true });
-  clients.forEach(client => client.postMessage({ type: 'UPDATE_AVAILABLE' }));
 })()));
 self.addEventListener('activate', event => event.waitUntil((async () => {
   await self.clients.claim();
