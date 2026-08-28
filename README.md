@@ -21,9 +21,10 @@ npm install
 npm run dev
 ```
 
-Open `http://localhost:5173`. Use `/demo` for a ready-to-review sample that
-uses a separate local-storage namespace. The app works offline after its first
-visit because the service worker stores the app shell.
+Open `http://localhost:5173`. Use `/work` to import your statement and ledger
+files, or `/demo` for a ready-to-review sample that uses a separate
+local-storage namespace. The app works offline after its first visit because
+the service worker stores the app shell.
 
 ## Verify and build
 

@@ -1,37 +1,15 @@
 [
-  {
-    "id": "sample-reconcile",
-    "claim": "Try the reconciliation flow with sample data",
-    "where": "landing hero, Demo route",
-    "test": "npm test -- --grep @claim:sample-reconcile",
-    "sandbox": "fresh browser context at /demo; load the sample and observe suggested matches"
-  },
-  {
-    "id": "csv-export",
-    "claim": "Exports reviewed rows as CSV",
-    "where": "review toolbar, README",
-    "test": "npm test -- --grep @claim:csv-export",
-    "sandbox": "fresh demo; export reviewed rows and assert the CSV header and accepted rows"
-  },
-  {
-    "id": "local-only",
-    "claim": "Your files stay in this browser",
-    "where": "landing facts, privacy section, README",
-    "test": "npm test -- --grep @claim:local-only",
-    "sandbox": "fresh demo; intercept requests during sample flow and permit only same-origin app assets"
-  },
-  {
-    "id": "offline-reload",
-    "claim": "The sample works offline after the first visit",
-    "where": "landing facts, README",
-    "test": "npm test -- --grep @claim:offline-reload",
-    "sandbox": "fresh browser context; visit /demo online, then setOffline(true), reload, and load sample"
-  },
-  {
-    "id": "paid-license",
-    "claim": "A valid $19 one-time license unlocks saved custom cleanup rules",
-    "where": "paid tier and license restore form",
-    "test": "npm test -- --grep @claim:paid-license",
-    "sandbox": "fresh browser context; fixture the license verification response and restore a valid token"
-  }
+  {"id":"sample-reconcile","claim":"The demo shows 10 statement rows matched against 11 ledger rows.","where":"Demo workspace","test":"npm test -- --grep @claim:sample-reconcile","sandbox":"Fresh /demo visit"},
+  {"id":"demo-isolation","claim":"Try it with sample data uses a separate demo browser-storage namespace.","where":"Landing primary action, demo banner, privacy page","test":"npm test -- --grep @claim:demo-isolation","sandbox":"Fresh landing-page visit and primary-action transition"},
+  {"id":"free-core-job","claim":"The free app imports a statement and ledger, creates a review queue, and exports reviewed rows.","where":"Landing facts, workbench","test":"npm test -- --grep @claim:free-core-job","sandbox":"Fresh /demo then Start for real, with two CSV fixtures"},
+  {"id":"statement-file-formats","claim":"Imports CSV, OFX/QFX, and QIF statement files plus a ledger CSV.","where":"Landing steps, workbench importer, README","test":"npm test -- --grep @claim:statement-file-formats","sandbox":"Fresh real workspace with OFX and QIF fixtures"},
+  {"id":"one-to-one-matching","claim":"Suggests one-to-one statement and ledger matches.","where":"Landing steps, README","test":"npm test -- --grep @claim:one-to-one-matching","sandbox":"Fresh real workspace with two same-value statements and one ledger row"},
+  {"id":"csv-export","claim":"Exports accepted reviewed rows as CSV.","where":"Workbench, README","test":"npm test -- --grep @claim:csv-export","sandbox":"Fresh /demo visit"},
+  {"id":"audit-export","claim":"Exports a JSON audit report.","where":"Landing steps, workbench, README","test":"npm test -- --grep @claim:audit-export","sandbox":"Fresh /demo visit"},
+  {"id":"local-only","claim":"Files stay in this browser during the demo flow.","where":"Landing facts, privacy page, README","test":"npm test -- --grep @claim:local-only","sandbox":"Fresh /demo visit with complete network capture"},
+  {"id":"no-bank-login","claim":"Does not ask for a bank login.","where":"Landing privacy section, README","test":"npm test -- --grep @claim:no-bank-login","sandbox":"Fresh real-workspace and landing visits"},
+  {"id":"offline-reload","claim":"Works offline after the first visit.","where":"Landing facts, README","test":"npm test -- --grep @claim:offline-reload","sandbox":"Fresh /demo visit, service-worker ready, then offline reload"},
+  {"id":"paid-license","claim":"A $19 one-time custom-rules license can be restored and verified with Sociobot billing.","where":"Landing paid section, README","test":"npm test -- --grep @claim:paid-license","sandbox":"Fresh landing visit with a recorded invalid billing response"},
+  {"id":"one-time-price","claim":"Custom cleanup rules cost $19 once.","where":"Landing paid section, README","test":"npm test -- --grep @claim:one-time-price","sandbox":"Fresh landing visit"},
+  {"id":"no-budget-advice","claim":"Does not provide budget advice.","where":"Landing privacy section, README","test":"npm test -- --grep @claim:no-budget-advice","sandbox":"Fresh landing visit"}
 ]
