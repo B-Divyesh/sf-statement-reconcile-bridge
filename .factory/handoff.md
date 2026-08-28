@@ -22,7 +22,7 @@ visit. Build output is `dist/index.html`.
 
 ## Quality notes
 
-Initial JavaScript is 7.43 KB gzip, CSS is 2.76 KB gzip, and the LCP image is
+Initial JavaScript is 7.43 KB gzip, CSS is 2.99 KB gzip, and the LCP image is
 89 KB WebP. Automated Playwright checks provide the accessibility smoke paths
 (semantic landmark, named controls, mobile keyboard route). No browser-console
 errors were observed in the claim suite.
