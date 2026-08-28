@@ -511,9 +511,24 @@ test("@regression: calendar-invalid CSV and QIF dates, OFX, truncated, and overs
   await expect(page.locator(".match.suggested")).toHaveCount(2);
 });
 
-test("@regression: mobile first screen, touch targets, and keyboard focus remain usable", async ({
+test("@regression: mobile and desktop first screens, touch targets, and keyboard focus remain usable", async ({
   page,
 }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto("/");
+  const facts = [
+    "Files stay in this browser.",
+    "Works offline after the first visit.",
+    "Free for the full reconciliation job.",
+  ];
+  for (const fact of facts) {
+    const box = await page.getByText(fact, { exact: true }).boundingBox();
+    expect(box, `${fact} bounds`).not.toBeNull();
+    expect(box!.y + box!.height, `${fact} desktop fold`).toBeLessThanOrEqual(
+      900,
+    );
+  }
+
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/");
   for (const target of [
@@ -682,4 +697,40 @@ test("@regression: workspace markup and route metadata are complete", async ({
     'rel="apple-touch-icon"',
   ])
     expect(notFound).toContain(marker);
+});
+
+test("@regression: copy audit is complete for reviewed landing copy and has accurate counts", () => {
+  const audit = readFileSync(".factory/copy-audit.md", "utf8");
+  const landing = audit.split("## Landing page")[1]?.split("## README")[0];
+  expect(landing).toBeTruthy();
+
+  const rows = new Map(
+    landing!
+      .split("\n")
+      .filter((line) => line.startsWith("| "))
+      .map((line) =>
+        line
+          .split("|")
+          .slice(1, -1)
+          .map((cell) => cell.trim()),
+      )
+      .filter(
+        ([copy, count]) =>
+          copy !== "Copy" && !copy.startsWith("---") && /^\d+$/.test(count),
+      )
+      .map(([copy, count]) => [copy, Number(count)]),
+  );
+
+  for (const [copy, count] of rows)
+    expect(count, copy).toBe(copy.split(/\s+/).length);
+
+  for (const copy of [
+    "Try it with sample data",
+    "Three steps",
+    "Import files",
+    "Review suggestions",
+    "Export reviewed rows",
+    "Read the privacy terms",
+  ])
+    expect(rows.has(copy), `${copy} is audited`).toBeTruthy();
 });

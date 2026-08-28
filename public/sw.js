@@ -1,4 +1,4 @@
-const CACHE = 'statement-bridge-v3';
+const CACHE = 'statement-bridge-v4';
 const SHELL = ['/', '/demo', '/work', '/privacy', '/terms', '/manifest.webmanifest', '/icon.svg', '/icon-192.png', '/icon-512.png'];
 self.addEventListener('install', event => event.waitUntil((async () => {
   await caches.open(CACHE).then(cache => cache.addAll(SHELL));

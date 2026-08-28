@@ -1,1 +1,1 @@
-Reconcile a bank statement with your private ledger, locally and without a bank login.
+Reconcile statement and ledger files locally, review every match, and export approved rows.
