@@ -1,17 +1,16 @@
 # Statement Reconcile Bridge
 
 Reconcile a downloaded bank statement with a private ledger without a bank
-login. It is for people who already keep a spreadsheet or local CSV and want a
-small monthly handoff tool instead of another budget app.
+login. It is for people with a spreadsheet or local CSV who need a monthly
+handoff tool, not another budget app.
 
 The app reads CSV, OFX/QFX, and QIF statement files plus a ledger CSV. It
-normalizes payee text, proposes one-to-one exact-cent matches, lets you review every match,
-and exports accepted rows plus a JSON audit report. Files stay in browser
-storage and are never sent to a server.
+proposes one-to-one exact-cent matches. Review each match. Export accepted rows
+and a JSON audit report. Files stay in browser storage and are never sent to a
+server.
 
-The complete reconciliation flow is free. A $19 one-time optional license
-unlocks saved custom cleanup rules for recurring bank wording. Sociobot and
-Dodo handle payment and refunds. Payment details never enter this app.
+The complete reconciliation flow is free. Save local cleanup rules for recurring
+bank wording without an account.
 
 ## Run it
 
@@ -40,9 +39,8 @@ and an offline demo reload.
 
 ## Privacy and limits
 
-This app asks for no bank credentials. Matches are suggestions, not financial
-advice. Review them before changing your primary ledger. See `/privacy` and
-`/terms` in the running app.
+This app asks for no bank credentials. Matches are suggestions. Review them
+before relying on them. See `/privacy` and `/terms` in the running app.
 
 ## License
 

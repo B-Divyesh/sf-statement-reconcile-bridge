@@ -77,20 +77,6 @@
     "sandbox": "Fresh /demo, service-worker ready, offline reload"
   },
   {
-    "id": "paid-license",
-    "claim": "A custom-rules license can be restored through Sociobot billing.",
-    "where": "Landing paid section, README",
-    "test": "npm test -- --grep @claim:paid-license",
-    "sandbox": "Recorded invalid billing response with request assertion"
-  },
-  {
-    "id": "one-time-price",
-    "claim": "Custom cleanup rules cost $19 once.",
-    "where": "Landing paid section, README",
-    "test": "npm test -- --grep @claim:one-time-price",
-    "sandbox": "Fresh landing visit"
-  },
-  {
     "id": "no-budget-advice",
     "claim": "Does not provide budget advice.",
     "where": "Landing privacy section, README",
@@ -107,9 +93,9 @@
   {
     "id": "rules-local-only",
     "claim": "Custom cleanup rules stay in browser storage.",
-    "where": "Paid workbench",
+    "where": "Workbench",
     "test": "npm test -- --grep @claim:rules-local-only",
-    "sandbox": "Cached fixture license, saved rule, reload, network capture"
+    "sandbox": "Fresh workbench, saved rule, reload, network capture"
   },
   {
     "id": "no-advertising-analytics",
@@ -117,12 +103,5 @@
     "where": "Privacy page",
     "test": "npm test -- --grep @claim:no-advertising-analytics",
     "sandbox": "Landing and privacy route network capture"
-  },
-  {
-    "id": "payment-handling",
-    "claim": "Sociobot and Dodo handle payment and refunds; payment details do not enter the app.",
-    "where": "Landing, privacy, terms, README",
-    "test": "npm test -- --grep @claim:payment-handling",
-    "sandbox": "Fresh landing and terms visits; checkout form absence"
   }
 ]

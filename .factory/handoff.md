@@ -1,4 +1,43 @@
-# Review 1 handoff — FAIL
+# Polish 1 handoff
+
+## Result
+
+Repaired review candidate `05e047f2c8f86c2e36d955898d962c1cfa726cc7`.
+The unavailable paid checkout was removed rather than left as a dead purchase
+path. Cleanup rules are now free and local. See `.factory/polish-1.md` for the
+finding-by-finding closure map.
+
+## Verification
+
+- Clean install: `npm ci` completed with 22 packages and zero vulnerabilities.
+- Every exact command in the 15-entry `.factory/claims.json` passed separately.
+- `npm test` passed 19/19, including demo isolation, privacy-network capture,
+  offline reload, 390 px layout, keyboard, dark/light Axe, and 404 metadata.
+- `npm run typecheck`, `npm run lint`, and `npm run build` passed. `dist/` was
+  produced; main JS is 20.12 kB (7.66 kB gzip), CSS is 11.01 kB (3.25 kB gzip),
+  and the hero WebP is 89.38 kB.
+
+## Deployment and live recheck
+
+- Repair commit: `0a914cb` (`fix: close review one findings`), pushed to
+  `origin/main`.
+- `/opt/fleet/lib/deploy-static.sh statement-reconcile-bridge dist` succeeded
+  with Azure deployment ID `f6854fd9-5c1c-42f3-a75f-fe43fcaff776`.
+- Cold live `https://statement-reconcile-bridge.sociobot.in/` serves
+  `main-BhgI0b-F.js`, the rebuilt production asset, and the CSP has
+  `connect-src 'self'` only.
+- Cold live `/missing-row-polish-1` returns HTTP 404 and contains the required
+  Apple touch, Open Graph, and Twitter metadata. The formerly dead checkout
+  link no longer exists.
+
+## Known gaps
+
+None. The former paid feature is intentionally absent because its hosted
+checkout was not provisioned; the product no longer makes payment promises.
+
+---
+
+# Historical review records
 
 ## What was done
 

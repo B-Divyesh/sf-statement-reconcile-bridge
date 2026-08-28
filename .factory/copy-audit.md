@@ -17,11 +17,10 @@
 | Add a bank CSV, OFX, or QIF and your ledger CSV.                                 |    12 | pass   |
 | See one-to-one matches with the reason for each score.                           |    10 | pass   |
 | Hand approved rows and an audit record back to your ledger.                      |    12 | pass   |
-| Save custom cleanup rules                                                        |     4 | pass   |
-| $19 once.                                                                        |     2 | pass   |
-| Exporting, reviewing, and audit files stay free.                                 |     7 | pass   |
-| Sociobot and Dodo handle payment and refunds.                                    |     7 | pass   |
-| Payment details never enter this app.                                            |     6 | pass   |
+| Local cleanup rules                                                              |     3 | pass   |
+| Save recurring payee wording                                                     |     4 | pass   |
+| Keep bank wording and ledger wording aligned before you review suggestions.      |    11 | pass   |
+| Set a cleanup rule                                                               |     4 | pass   |
 | No bank login.                                                                   |     3 | pass   |
 | No budget advice.                                                                |     3 | pass   |
 | This is a bridge between files you already control.                              |    10 | pass   |

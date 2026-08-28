@@ -20,14 +20,10 @@ type Stored = {
 type AuditEntry = { at: string; action: string; detail: string };
 type NoticeKind = "status" | "error";
 const app = document.querySelector<HTMLDivElement>("#app")!;
-const product = "statement-reconcile-bridge";
-const licenseKey = `sb_license:${product}`;
-const checkout = `https://api.sociobot.in/api/v1/products/${product}/checkout`;
 let activeRoot = storageRoot();
 let state = load(activeRoot) || initialState(activeRoot);
 let notice = "";
 let noticeKind: NoticeKind = "status";
-let paid = false;
 let updateReady = false;
 let registration: ServiceWorkerRegistration | undefined;
 let applyingUpdate = false;
@@ -149,7 +145,7 @@ function shell(content: string) {
 }
 function landing() {
   return shell(
-    `<main id="main"><section class="hero"><div class="hero-copy"><p class="eyebrow">Private file-to-file reconciliation</p><h1 tabindex="-1">Reconcile your statement with your ledger</h1><p class="lede">For people with a private budget file who need to check a monthly bank download.</p><div class="hero-actions"><button class="primary" data-action="sample">Try it with sample data</button><span>See suggested matches right away.</span><a class="real-start" href="/work" data-route>Start with your files</a></div><ul class="facts"><li>Files stay in this browser.</li><li>Works offline after the first visit.</li><li>Free for the full reconciliation job.</li></ul></div><figure><img src="${heroUrl}" width="1536" height="1024" fetchpriority="high" alt="A paper statement and graph-paper ledger on cracked concrete with moss." /><figcaption>Two independent records. One small bridge.</figcaption></figure></section><section id="work" class="steps"><p class="eyebrow">Three steps</p><h2>Move through a monthly statement</h2><ol><li><b>1. Import files</b><span>Add a bank CSV, OFX, or QIF and your ledger CSV.</span></li><li><b>2. Review suggestions</b><span>See one-to-one matches with the reason for each score.</span></li><li><b>3. Export reviewed rows</b><span>Hand approved rows and an audit record back to your ledger.</span></li></ol></section><section class="paid-block"><p class="eyebrow">Optional one-time purchase</p><h2>Save custom cleanup rules</h2><p>$19 once. Exporting, reviewing, and audit files stay free.</p><p>Sociobot and Dodo handle payment and refunds. Payment details never enter this app.</p>${paid ? '<p class="license-ok">License active. Custom cleanup rules are ready in the workbench.</p>' : `<p><a class="buy-link" href="${checkout}" target="_blank" rel="noreferrer">Buy custom rules — $19</a></p><label class="restore">Have a license? <input id="license-input" autocomplete="off" aria-describedby="app-message" placeholder="Paste license token" /><button data-action="restore">Restore license</button></label>`}${message()}</section><section class="privacy-block"><h2>No bank login. No budget advice.</h2><p>This is a bridge between files you already control. Matches are suggestions. You make the final call.</p><a href="/privacy" data-route>Read the privacy terms</a></section></main>`,
+    `<main id="main"><section class="hero"><div class="hero-copy"><p class="eyebrow">Private file-to-file reconciliation</p><h1 tabindex="-1">Reconcile your statement with your ledger</h1><p class="lede">For people with a private budget file who need to check a monthly bank download.</p><div class="hero-actions"><button class="primary" data-action="sample">Try it with sample data</button><span>See suggested matches right away.</span><a class="real-start" href="/work" data-route>Start with your files</a></div><ul class="facts"><li>Files stay in this browser.</li><li>Works offline after the first visit.</li><li>Free for the full reconciliation job.</li></ul></div><figure><img src="${heroUrl}" width="1536" height="1024" fetchpriority="high" alt="A paper statement and graph-paper ledger on cracked concrete with moss." /><figcaption>Two independent records. One small bridge.</figcaption></figure></section><section id="work" class="steps"><p class="eyebrow">Three steps</p><h2>Move through a monthly statement</h2><ol><li><b>1. Import files</b><span>Add a bank CSV, OFX, or QIF and your ledger CSV.</span></li><li><b>2. Review suggestions</b><span>See one-to-one matches with the reason for each score.</span></li><li><b>3. Export reviewed rows</b><span>Hand approved rows and an audit record back to your ledger.</span></li></ol></section><section class="rules-callout"><p class="eyebrow">Local cleanup rules</p><h2>Save recurring payee wording</h2><p>Keep bank wording and ledger wording aligned before you review suggestions.</p><a href="/work" data-route>Set a cleanup rule</a></section><section class="privacy-block"><h2>No bank login. No budget advice.</h2><p>This is a bridge between files you already control. Matches are suggestions. You make the final call.</p><a href="/privacy" data-route>Read the privacy terms</a></section></main>`,
   );
 }
 function filePicker(
@@ -167,7 +163,7 @@ function workspace() {
       (m) => m.status === "unmatched" || m.status === "rejected",
     ).length;
   return shell(
-    `<main id="main" class="workspace"><section class="workhead"><div><p class="eyebrow">${activeRoot.startsWith("demo:") ? "Sample reconciliation" : "Your local reconciliation"}</p><h1 tabindex="-1">Review statement matches</h1><p>${ready ? `${state.statement.length} statement rows and ${state.ledger.length} ledger rows are loaded.` : "Add both files to create a review queue."}</p></div><button class="ghost" data-action="clear">Clear files</button></section>${message()}${!ready ? `<section class="import-grid" aria-label="Import files">${filePicker("statement", "1. Add bank statement", "text/csv,.csv,.ofx,.qfx,.qif")}${filePicker("ledger", "2. Add ledger CSV", "text/csv,.csv")}</section><p class="help" id="import-help">Expected CSV columns: date, payee or description, and amount. Debit and credit columns also work.</p>` : `<section class="summary" aria-label="Match summary"><div><b>${high}</b><span>accepted</span></div><div><b>${review}</b><span>to review</span></div><div><b>${unmatched}</b><span>unmatched</span></div><div><b>${Math.round((high / state.matches.length) * 100)}%</b><span>reviewed</span></div></section>${paid ? `<section class="rules"><div><h2>Custom cleanup rule</h2><p>Replace one recurring payee phrase before matching. Rules stay in this browser.</p></div><label>Bank wording<input id="rule-find" aria-describedby="app-message" placeholder="e.g. POS GREENMART" /></label><label>Ledger wording<input id="rule-replace" aria-describedby="app-message" placeholder="e.g. Greenmart" /></label><button data-action="rule">Save rule</button>${state.rules.length ? `<p class="rule-list">Saved: ${state.rules.map((r) => `${esc(r.find)} → ${esc(r.replace)}`).join(" · ")}</p>` : ""}</section>` : `<section class="rules locked"><div><h2>Custom cleanup rules</h2><p>Save recurring bank wording changes with the $19 one-time purchase.</p></div><a href="${checkout}" target="_blank" rel="noreferrer">Buy custom rules</a></section>`}<section class="toolbar"><p>Accept or reject each suggestion. Exports include accepted rows only.</p><span><button class="ghost" data-action="audit">Export audit report</button><button class="primary" data-action="csv">Export reviewed CSV</button></span></section><section class="match-list" aria-label="Reconciliation review">${state.matches.map(matchRow).join("")}</section>`}</main>`,
+    `<main id="main" class="workspace"><section class="workhead"><div><p class="eyebrow">${activeRoot.startsWith("demo:") ? "Sample reconciliation" : "Your local reconciliation"}</p><h1 tabindex="-1">Review statement matches</h1><p>${ready ? `${state.statement.length} statement rows and ${state.ledger.length} ledger rows are loaded.` : "Add both files to create a review queue."}</p></div><button class="ghost" data-action="clear">Clear files</button></section>${message()}${!ready ? `<section class="import-grid" aria-label="Import files">${filePicker("statement", "1. Add bank statement", "text/csv,.csv,.ofx,.qfx,.qif")}${filePicker("ledger", "2. Add ledger CSV", "text/csv,.csv")}</section><p class="help" id="import-help">Expected CSV columns: date, payee or description, and amount. Debit and credit columns also work.</p>` : `<section class="summary" aria-label="Match summary"><div><b>${high}</b><span>accepted</span></div><div><b>${review}</b><span>to review</span></div><div><b>${unmatched}</b><span>unmatched</span></div><div><b>${Math.round((high / state.matches.length) * 100)}%</b><span>reviewed</span></div></section><section class="rules"><div><h2>Custom cleanup rule</h2><p>Replace one recurring payee phrase before matching. Rules stay in this browser.</p></div><label>Bank wording<input id="rule-find" aria-describedby="app-message" placeholder="e.g. POS GREENMART" /></label><label>Ledger wording<input id="rule-replace" aria-describedby="app-message" placeholder="e.g. Greenmart" /></label><button data-action="rule">Save rule</button>${state.rules.length ? `<p class="rule-list">Saved: ${state.rules.map((r) => `${esc(r.find)} → ${esc(r.replace)}`).join(" · ")}</p>` : ""}</section><section class="toolbar"><p>Accept or reject each suggestion. Exports include accepted rows only.</p><span><button class="ghost" data-action="audit">Export audit report</button><button class="primary" data-action="csv">Export reviewed CSV</button></span></section><section class="match-list" aria-label="Reconciliation review">${state.matches.map(matchRow).join("")}</section>`}</main>`,
   );
 }
 function matchRow(m: Match) {
@@ -178,7 +174,7 @@ function matchRow(m: Match) {
 function legal(kind: "privacy" | "terms") {
   const privacy = kind === "privacy";
   return shell(
-    `<main id="main" class="legal"><p class="eyebrow">${privacy ? "Privacy" : "Terms"}</p><h1 tabindex="-1">${privacy ? "Your files stay on your device" : "Terms for Statement Reconcile Bridge"}</h1>${privacy ? "<p>Statement Reconcile Bridge reads transaction files in your browser. It stores your work in browser local storage so it survives a refresh. It does not collect bank credentials, send transaction files to a server, or use advertising analytics.</p><p>You can clear local work with Clear files. Exported CSV and audit files go where your browser normally saves downloads. The sample demo uses a separate browser-storage namespace and is removed when you leave it.</p><p>This app is a reconciliation aid. It suggests matches. Check each result before relying on it.</p><p>License checkout and verification use Sociobot. Payment details never enter this app.</p>" : "<p>Use this tool to compare files you are allowed to use. You remain responsible for reviewing every match and for keeping backups of your ledger.</p><p>The app is provided as a local utility without financial advice, bank access, or a promise that every record matches. These terms may change when the app changes.</p><p>Sociobot and Dodo are the merchant of record. They handle payment and refunds. A refund revokes the related license.</p><p>Questions about the product can be sent to the Param Factory.</p>"}</main>`,
+    `<main id="main" class="legal"><p class="eyebrow">${privacy ? "Privacy" : "Terms"}</p><h1 tabindex="-1">${privacy ? "Your files stay on your device" : "Terms for Statement Reconcile Bridge"}</h1>${privacy ? "<p>Statement Reconcile Bridge reads transaction files in your browser. It stores your work in browser local storage so it survives a refresh. It does not collect bank credentials, send transaction files to a server, or use advertising analytics.</p><p>You can clear local work with Clear files. Exported CSV and audit files go where your browser normally saves downloads. The sample demo uses a separate browser-storage namespace and is removed when you leave it.</p><p>This app is a reconciliation aid. It suggests matches. Check each result before relying on it.</p>" : "<p>Use this tool to compare files you are allowed to use. You remain responsible for reviewing every match and for keeping backups of your ledger.</p><p>The app is a local utility without bank access. It cannot promise that every record matches. These terms may change when the app changes.</p><p>Questions about the product can be sent to the Param Factory.</p>"}</main>`,
   );
 }
 function notFound() {
@@ -319,16 +315,7 @@ function action(name: string) {
       ),
       "application/json",
     );
-  else if (name === "restore") {
-    const token = document
-      .querySelector<HTMLInputElement>("#license-input")
-      ?.value.trim();
-    if (token) verifyLicense(token);
-    else {
-      tell("Paste your license token, then restore it.", "error");
-      render();
-    }
-  } else if (name === "rule") {
+  else if (name === "rule") {
     const find =
         document.querySelector<HTMLInputElement>("#rule-find")?.value.trim() ||
         "",
@@ -386,63 +373,6 @@ function download(name: string, body: string, type = "text/csv") {
   anchor.click();
   setTimeout(() => URL.revokeObjectURL(url), 0);
 }
-async function verifyLicense(token: string) {
-  localStorage.setItem(licenseKey, token);
-  tell("Checking your license…");
-  render();
-  try {
-    const response = await fetch(
-      `${checkout.replace("/checkout", "/verify")}?license=${encodeURIComponent(token)}`,
-    );
-    if (!response.ok) throw new Error("License service unavailable");
-    const verdict = (await response.json()) as { valid: boolean };
-    paid = verdict.valid;
-    localStorage.setItem(
-      `${licenseKey}:verdict`,
-      JSON.stringify({ valid: paid, checked: Date.now() }),
-    );
-    tell(
-      paid
-        ? "License active. Custom cleanup rules are ready."
-        : "That license is not active. Check the token or buy a new unlock.",
-      paid ? "status" : "error",
-    );
-    if (!paid) localStorage.removeItem(licenseKey);
-  } catch {
-    paid = false;
-    tell(
-      "Could not verify the license. Check your connection and try again.",
-      "error",
-    );
-  }
-  render();
-}
-function restoreLicenseOnLoad() {
-  const params = new URLSearchParams(location.search);
-  const token = params.get("license");
-  if (token) {
-    localStorage.setItem(licenseKey, token);
-    paid = true;
-    params.delete("license");
-    history.replaceState(
-      {},
-      "",
-      `${location.pathname}${params.size ? `?${params}` : ""}`,
-    );
-  }
-  const stored = localStorage.getItem(licenseKey);
-  const cached = localStorage.getItem(`${licenseKey}:verdict`);
-  if (cached) {
-    try {
-      const value = JSON.parse(cached) as { valid: boolean; checked: number };
-      paid = value.valid;
-      if (stored && Date.now() - value.checked > 86400000)
-        verifyLicense(stored);
-    } catch {
-      /* discard malformed cache */
-    }
-  } else if (stored) verifyLicense(stored);
-}
 function registerServiceWorker() {
   if (!("serviceWorker" in navigator)) return;
   navigator.serviceWorker.addEventListener("message", (event) => {
@@ -476,6 +406,5 @@ function registerServiceWorker() {
     })
     .catch(() => {});
 }
-restoreLicenseOnLoad();
 registerServiceWorker();
 render();

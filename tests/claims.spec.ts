@@ -75,7 +75,7 @@ test("@claim:demo-isolation enters and leaves an isolated sample namespace", asy
   ).toBeFalsy();
 });
 
-test("@claim:free-core-job completes import, review, and export without a license", async ({
+test("@claim:free-core-job completes import, review, and export", async ({
   page,
 }) => {
   await page.goto("/work");
@@ -84,9 +84,6 @@ test("@claim:free-core-job completes import, review, and export without a licens
   await page.getByRole("button", { name: "Accept" }).first().click();
   const { content } = await downloadedText(page, "Export reviewed CSV");
   expect(content.trim().split("\n")).toHaveLength(2);
-  await expect(
-    page.getByRole("link", { name: "Buy custom rules" }),
-  ).toBeVisible();
 });
 
 test("@claim:statement-file-formats imports CSV debit/credit, OFX/QFX, and QIF", async ({
@@ -243,58 +240,6 @@ test("@claim:offline-reload renders the sample after an offline reload", async (
   await expect(page.locator(".match")).toHaveCount(10);
 });
 
-test("@claim:paid-license verifies a restored license through Sociobot billing", async ({
-  page,
-}) => {
-  await page.addInitScript(() => {
-    const realFetch = window.fetch.bind(window);
-    window.fetch = async (input, init) => {
-      if (
-        String(input).includes(
-          "api.sociobot.in/api/v1/products/statement-reconcile-bridge/verify?license=bad-token",
-        )
-      ) {
-        (window as unknown as { verifyRequested: boolean }).verifyRequested =
-          true;
-        return new Response(
-          JSON.stringify({ valid: false, reason: "invalid" }),
-          { status: 200, headers: { "content-type": "application/json" } },
-        );
-      }
-      return realFetch(input, init);
-    };
-  });
-  await page.goto("/");
-  await page.locator("#license-input").fill("bad-token");
-  await page.getByRole("button", { name: "Restore license" }).click();
-  await expect(page.getByRole("alert")).toContainText(
-    "That license is not active.",
-  );
-  expect(
-    await page.evaluate(
-      () =>
-        (window as unknown as { verifyRequested?: boolean }).verifyRequested,
-    ),
-  ).toBeTruthy();
-  expect(readFileSync("public/staticwebapp.config.json", "utf8")).toContain(
-    "connect-src 'self' https://api.sociobot.in",
-  );
-});
-
-test("@claim:one-time-price shows the exact custom-rules price", async ({
-  page,
-}) => {
-  await page.goto("/");
-  await expect(
-    page.getByText(
-      "$19 once. Exporting, reviewing, and audit files stay free.",
-    ),
-  ).toBeVisible();
-  await expect(
-    page.getByRole("link", { name: "Buy custom rules — $19" }),
-  ).toHaveAttribute("href", /api\.sociobot\.in.*checkout/);
-});
-
 test("@claim:no-budget-advice states the product limit plainly", async ({
   page,
 }) => {
@@ -316,16 +261,9 @@ test("@claim:real-persistence keeps real imported work across refresh", async ({
   await expect(page.locator(".match")).toHaveCount(2);
 });
 
-test("@claim:rules-local-only stores a paid cleanup rule only in local browser state", async ({
+test("@claim:rules-local-only stores a cleanup rule only in local browser state", async ({
   page,
 }) => {
-  await page.addInitScript(() => {
-    localStorage.setItem("sb_license:statement-reconcile-bridge", "fixture");
-    localStorage.setItem(
-      "sb_license:statement-reconcile-bridge:verdict",
-      JSON.stringify({ valid: true, checked: Date.now() }),
-    );
-  });
   const external: string[] = [];
   page.on("request", (request) => {
     if (new URL(request.url()).origin !== "http://127.0.0.1:4173")
@@ -353,24 +291,6 @@ test("@claim:no-advertising-analytics has no tracker scripts or advertising requ
   ).toBeTruthy();
   await expect(
     page.getByText(/does not collect bank credentials.*advertising analytics/i),
-  ).toBeVisible();
-});
-
-test("@claim:payment-handling keeps payment entry outside the app and explains refunds", async ({
-  page,
-}) => {
-  await page.goto("/");
-  await expect(
-    page.getByText(
-      "Sociobot and Dodo handle payment and refunds. Payment details never enter this app.",
-    ),
-  ).toBeVisible();
-  await expect(page.locator('input[autocomplete^="cc-"]')).toHaveCount(0);
-  await page.goto("/terms");
-  await expect(
-    page.getByText(
-      "Sociobot and Dodo are the merchant of record. They handle payment and refunds.",
-    ),
   ).toBeVisible();
 });
 
@@ -490,4 +410,14 @@ test("@regression: workspace markup and route metadata are complete", async ({
   const notFound = readFileSync("public/404.html", "utf8");
   expect(notFound).toContain("<header>");
   expect(notFound).toContain("<footer>");
+  for (const marker of [
+    'property="og:title"',
+    'property="og:description"',
+    'property="og:image"',
+    'name="twitter:card"',
+    'name="twitter:title"',
+    'name="twitter:description"',
+    'rel="apple-touch-icon"',
+  ])
+    expect(notFound).toContain(marker);
 });
