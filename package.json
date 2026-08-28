@@ -1,0 +1,16 @@
+{
+  "name": "statement-reconcile-bridge",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "test": "playwright test"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.58.2",
+    "typescript": "^5.7.3",
+    "vite": "^6.1.0"
+  }
+}

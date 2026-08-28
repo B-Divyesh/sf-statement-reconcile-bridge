@@ -1,0 +1,37 @@
+[
+  {
+    "id": "sample-reconcile",
+    "claim": "Try the reconciliation flow with sample data",
+    "where": "landing hero, Demo route",
+    "test": "npm test -- --grep @claim:sample-reconcile",
+    "sandbox": "fresh browser context at /demo; load the sample and observe suggested matches"
+  },
+  {
+    "id": "csv-export",
+    "claim": "Exports reviewed rows as CSV",
+    "where": "review toolbar, README",
+    "test": "npm test -- --grep @claim:csv-export",
+    "sandbox": "fresh demo; export reviewed rows and assert the CSV header and accepted rows"
+  },
+  {
+    "id": "local-only",
+    "claim": "Your files stay in this browser",
+    "where": "landing facts, privacy section, README",
+    "test": "npm test -- --grep @claim:local-only",
+    "sandbox": "fresh demo; intercept requests during sample flow and permit only same-origin app assets"
+  },
+  {
+    "id": "offline-reload",
+    "claim": "The sample works offline after the first visit",
+    "where": "landing facts, README",
+    "test": "npm test -- --grep @claim:offline-reload",
+    "sandbox": "fresh browser context; visit /demo online, then setOffline(true), reload, and load sample"
+  },
+  {
+    "id": "paid-license",
+    "claim": "A valid $19 one-time license unlocks saved custom cleanup rules",
+    "where": "paid tier and license restore form",
+    "test": "npm test -- --grep @claim:paid-license",
+    "sandbox": "fresh browser context; fixture the license verification response and restore a valid token"
+  }
+]
