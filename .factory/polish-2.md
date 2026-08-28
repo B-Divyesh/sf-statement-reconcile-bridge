@@ -1,6 +1,6 @@
 # Polish 2 — cumulative finding closure
 
-Repair commit: `2e5b12e1117110ee7642bccfc8b805d97ebed674`, based on
+Repair commit: `c0e48b5aae2254a8322de99ee8442cac432d0e09`, based on
 `522fa9ba1944649776cb97f5457e1b8032cc9b6a`.
 All review, verification, and earlier-polish records were read before this
 repair. Evidence paths below are retained in the worker at
@@ -14,7 +14,7 @@ repair. Evidence paths below are retained in the worker at
 | F-1-4                                                 | Kept the untested payee-normalisation marketing promise absent.                                                                                                                                           | README/source audit; `@claim:one-to-one-matching`.                                                                  |
 | F-1-5                                                 | Kept the tested manual-review wording in place.                                                                                                                                                           | `@claim:manual-review`.                                                                                             |
 | F-1-6                                                 | Kept the complete 404 social and icon metadata, now including the explicit Twitter image.                                                                                                                 | `@regression: workspace markup and route metadata are complete`.                                                    |
-| F-2-1                                                 | Added explicit Twitter title, description, and image on home; added Twitter image to demo, work, privacy, terms, and 404. The metadata regression requires all four Twitter fields on every route source. | `@regression: workspace markup and route metadata are complete`; live recheck recorded below.                       |
+| F-2-1                                                 | Added explicit Twitter title, description, and image on home; added Twitter image to demo, work, privacy, terms, and 404. The metadata regression requires all four Twitter fields on every route source. | Metadata regression; live route sweep confirmed all four fields.                                                    |
 | F-2-2                                                 | Replaced the landing phrase “audit record” with the product-wide term “audit report.”                                                                                                                     | `.factory/copy-audit.md`; source audit; mobile screenshot `/tmp/srb-polish-2/local-home-mobile.png`.                |
 | F-2-3                                                 | Added `cleanup-rule-matching` to the claim inventory and a real browser test. A mismatched pair changes from 65%/caution to 95%/payee agreement after saving a rule.                                      | `@claim:cleanup-rule-matching`; `npm test -- --grep @claim --workers=4`.                                            |
 | verification P0: demo isolation                       | Kept the separate `demo:` namespace and expanded `@claim:demo-isolation` to open `?demo=1`, show the banner, and reset isolated sample state.                                                             | `@claim:demo-isolation`; `/tmp/srb-polish-2/local-demo-desktop.png`.                                                |
@@ -46,5 +46,20 @@ repair. Evidence paths below are retained in the worker at
 
 ## Deployment recheck
 
-The work-order push, cold live URL check, and screenshots are appended after
-deployment completes.
+- Deployed `dist/` with the work-order command
+  `/opt/fleet/lib/deploy-static.sh statement-reconcile-bridge dist`. Azure Static
+  Web Apps deployment `5190fb1e-0de1-4ad2-92e6-896e78c2d762` succeeded.
+- Cold live checks at `https://statement-reconcile-bridge.sociobot.in/` found
+  no console errors, one H1 and main landmark, title/lang/alt-text baseline,
+  all Twitter fields on `/`, `/demo`, `/work`, `/privacy`, `/terms`, and the
+  designed `/missing-polish-2` 404. The missing route returned HTTP 404.
+- The direct `?demo=1` path showed 10 suggestions and the persistent banner.
+  Reset wrote only `demo:statement-reconcile-bridge:state`; Start for real
+  opened `/work` and removed the demo namespace. The live browser captured no
+  off-origin request.
+- Live mobile first-screen bottoms were 306.7 px (H1), 403.2 px (audience),
+  and 469.2 px (sample CTA) in a 390×844 viewport. Live Axe found no serious
+  or critical violation on each public route in either color scheme.
+- Live screenshots: `/tmp/srb-polish-2/live-browser/demo-desktop.png` and
+  `/tmp/srb-polish-2/live-browser/home-mobile.png`; URL verifier evidence:
+  `/tmp/srb-polish-2/live-verify/`.
