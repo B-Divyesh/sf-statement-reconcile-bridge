@@ -228,11 +228,6 @@ nav a {
   border: 1px solid var(--ink);
   filter: saturate(0.8);
 }
-figcaption {
-  font-size: 12px;
-  color: var(--muted);
-  margin-top: 8px;
-}
 .steps {
   padding: 45px 0 76px;
   border-top: 1px solid var(--ink);

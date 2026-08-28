@@ -21,6 +21,13 @@
     "sandbox": "Fresh /work visit with two CSV fixtures"
   },
   {
+    "id": "input-files-unchanged",
+    "claim": "Reconciles selected ledger files without changing their bytes.",
+    "where": "Landing footer",
+    "test": "npm test -- --grep @claim:input-files-unchanged",
+    "sandbox": "Fresh /work visit; retain fixture bytes through import, review, and export"
+  },
+  {
     "id": "statement-file-formats",
     "claim": "Imports CSV debit/credit columns, OFX/QFX, and QIF statements plus ledger CSV.",
     "where": "Landing, importer, README",

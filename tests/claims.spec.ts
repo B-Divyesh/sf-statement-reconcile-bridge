@@ -148,6 +148,46 @@ test("@claim:free-core-job completes import, review, and export", async ({
   expect(content.trim().split("\n")).toHaveLength(2);
 });
 
+test("@claim:input-files-unchanged keeps selected file bytes intact through review and export", async ({
+  page,
+}) => {
+  await page.goto("/work");
+  await page.locator("#statement-file").setInputFiles({
+    name: "statement.csv",
+    mimeType: "text/csv",
+    buffer: statement,
+  });
+  await page.evaluate((ledgerText) => {
+    const ledgerFile = new File([ledgerText], "ledger.csv", {
+      type: "text/csv",
+    });
+    (
+      globalThis as typeof globalThis & { retainedLedgerFile: File }
+    ).retainedLedgerFile = ledgerFile;
+    const input = document.querySelector<HTMLInputElement>("#ledger-file")!;
+    const selection = new DataTransfer();
+    selection.items.add(ledgerFile);
+    input.files = selection.files;
+    input.dispatchEvent(new Event("change", { bubbles: true }));
+  }, ledger.toString());
+  await expect(page.locator(".match.suggested")).toHaveCount(2);
+  const selectedLedgerBytes = () =>
+    page.evaluate(async () =>
+      Array.from(
+        new Uint8Array(
+          await (
+            globalThis as typeof globalThis & { retainedLedgerFile: File }
+          ).retainedLedgerFile.arrayBuffer(),
+        ),
+      ),
+    );
+
+  expect(Buffer.from(await selectedLedgerBytes())).toEqual(ledger);
+  await page.getByRole("button", { name: "Accept" }).first().click();
+  await downloadedText(page, "Export reviewed CSV");
+  expect(Buffer.from(await selectedLedgerBytes())).toEqual(ledger);
+});
+
 test("@claim:statement-file-formats imports CSV debit/credit, OFX/QFX, and QIF", async ({
   page,
 }) => {
