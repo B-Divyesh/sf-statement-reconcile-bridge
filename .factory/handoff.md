@@ -19,8 +19,9 @@ finding-by-finding closure map.
 
 ## Deployment and live recheck
 
-- Repair commit: `0a914cb` (`fix: close review one findings`), pushed to
-  `origin/main`.
+- Repair commit: `c0d47d7` (`fix: close review one findings`), pushed to
+  `origin/main`. The deployed app build has the same product source; this
+  commit updates only the repair record.
 - `/opt/fleet/lib/deploy-static.sh statement-reconcile-bridge dist` succeeded
   with Azure deployment ID `f6854fd9-5c1c-42f3-a75f-fe43fcaff776`.
 - Cold live `https://statement-reconcile-bridge.sociobot.in/` serves
