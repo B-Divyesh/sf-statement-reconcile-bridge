@@ -1,42 +1,57 @@
-# Review 6 handoff
+# Polish 6 handoff
 
 ## Result
 
-**FAIL.** `.factory/review-6.md` records two blocking demo findings and five
-minor copy findings. No product code was changed.
+**PASS.** Repair commit `26aeb5906efdca2d0e56bb055106f757d0504560`
+closes F-6-1 through F-6-7 while retaining all earlier fixes and the
+concrete-and-moss PWA identity. Static deployment
+`c5b1b881-6f5b-40b3-bcd3-5806f6eba540` is live at
+https://statement-reconcile-bridge.sociobot.in.
 
-The blocking issues are:
+The demo now discards changed sample state on clicked exits, browser Back, and
+address-bar navigation. Browser Forward opens a fresh sample. The first full
+statement-to-ledger comparison is visible at 390×844, before summary and rule
+controls. The five requested copy rewrites and the verb-first catalog sentence
+are complete.
 
-1. Browser Back leaves changed `demo:` state behind, and Forward restores the
-   accepted sample row despite the “nothing is saved” / “removed on exit” claim.
-2. At 390×844, the first realistic match begins at y=1091.44, so the first
-   screen after entering the demo does not show sample transaction data.
+## Verification
 
-## Verification performed
+- Clean clone: `/tmp/statement-reconcile-bridge-polish-6/clean` at the repair
+  commit. `npm ci` installed 22 packages with zero vulnerabilities.
+- Every one of the 18 commands in `.factory/claims.json` passed independently.
+- `npm run typecheck`, `npm run lint`, `npm test -- --workers=1` (24/24), and
+  `npm run build` passed from the clean clone.
+- Production output: 21.98 kB JavaScript (8.17 kB gzip), 11.02 kB CSS (3.26 kB
+  gzip), and an 89.38 kB product-owned hero image.
+- Local and live `/opt/fleet/lib/verify-url.sh` checks passed. Evidence is in
+  `/tmp/statement-reconcile-bridge-polish-6/local-verify/` and
+  `/tmp/statement-reconcile-bridge-polish-6/live-verify/`.
+- Live browser audit: one-click and direct-query demos, banner and Reset,
+  Back/Forward cleanup, address-bar cleanup, real-storage isolation, offline
+  reload, route titles and metadata, H1 focus, 404, legal links, request privacy,
+  and mobile overflow all passed. The first mobile match ends at 815.94 px in
+  the 844 px viewport. Audit and screenshots are under
+  `/tmp/statement-reconcile-bridge-polish-6/live/`.
+- Axe found zero violations across `/`, `/demo`, `/work`, `/privacy`, `/terms`,
+  and the 404 in both light and dark color schemes.
+- Live Lighthouse mobile scored 100 performance, 100 accessibility, 100 best
+  practices, and 100 SEO. LCP was 1.3 s, CLS 0, and TBT 10 ms. The report is
+  `/tmp/statement-reconcile-bridge-polish-6/live/lighthouse-mobile.json`.
+- Live JavaScript, CSS, and service-worker SHA-256 values exactly match `dist/`.
 
-- Fresh mobile and desktop Chromium contexts against the live URL.
-- One-click demo, Reset, Start for real, real-storage sentinel, browser
-  Back/Forward, request log, and offline reload checks.
-- Fresh remote clone at `04c2f942c5561494a83946bef18c85bdf5847f59`.
-- All 18 exact `.factory/claims.json` commands passed independently; each claim
-  ID has exactly one test tag.
-- `npm test -- --workers=1`: 24/24 passed.
-- `npm run typecheck`, `npm run lint`, and `npm run build`: passed; `dist/`
-  produced.
-- Live route, metadata, link, 404, focus/history, console, and request sweeps.
-- `/opt/fleet/lib/verify-url.sh`: passed after creating its evidence directory.
-- Live Axe in light and dark on `/`, `/demo`, `/work`, `/privacy`, `/terms`,
-  and the designed 404: zero violations.
-- Live JS and CSS hashes exactly match the clean-clone build.
-- Every earlier review, polish, verification, and handoff record was read and
-  its findings rechecked against current source and live behavior.
+## Run and verify
 
-Evidence generated during review is under `/tmp/srb-review6/`. The clean clone
-is `/tmp/srb-review6-clean-G153N0/repo`.
+```sh
+npm ci
+npm run typecheck
+npm run lint
+npm test -- --workers=1
+npm run build
+```
 
-## Remaining work
+Use `/demo` or `/?demo=1` for the isolated sample and `/work` for real files.
+Deployment remains a static PWA with `dist/index.html` at its root.
 
-Resolve F-6-1 through F-6-7 in `.factory/review-6.md`. In particular, extend
-`@claim:demo-isolation` to cover browser history and add a 390×844 assertion
-that a real statement-to-ledger match is visible without scrolling. Then rerun
-all declared claim commands and the full suite from a clean clone.
+## Known gaps and next steps
+
+None. No finding of any severity remains unresolved.
