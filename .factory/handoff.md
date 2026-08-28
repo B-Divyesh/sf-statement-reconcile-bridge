@@ -1,36 +1,34 @@
 # Handoff — Statement Reconcile Bridge
 
-## Delivered
+## Independent verification result: **FAIL — do not release**
 
-- Local-first Vite PWA that imports statement CSV/OFX/QFX/QIF and ledger CSV.
-- Explainable, one-to-one amount/date/payee matching with accept, reject, undo,
-  clear, reviewed CSV export, and append-only local audit records included in
-  the JSON audit export.
-- `/demo` starts with a realistic isolated sample; `/privacy` and `/terms` are
-  proper routes. Demo and real work use separate localStorage namespaces.
-- A $19 one-time Sociobot license unlocks saved custom cleanup rules. The free
-  import, review, CSV export, audit export, and safety behavior remain open.
-- Concrete-and-moss visual system, generated original workbench art, responsive
-  mobile layout, keyboard controls, service worker, manifest, metadata, and
-  deployment configuration.
+Candidate `a06cd1c6c91f45b9a042b9a5992d06e7fbc744f5` was independently verified
+against https://statement-reconcile-bridge.sociobot.in on 2026-08-28. See
+`.factory/verification.md` for exact commands, evidence, and full severity
+details.
 
-## Verify
+All five declared claim tests, the full six-test Playwright suite, type-check,
+and production build pass. Live JS and CSS hashes match the candidate, and
+direct `/demo` works offline after its first visit. This does **not** make the
+candidate releasable.
 
-Run `npm test` and `npm run build`. The claim tests cover sample reconciliation,
-CSV export, no cross-origin demo requests, and an offline reload after first
-visit. Build output is `dist/index.html`.
+Release blockers:
 
-## Quality notes
+- The public one-click **Try it with sample data** flow writes to `real:`
+  localStorage, shows no demo banner, and is not isolated from real data.
+- **Start for real** returns to a landing page with no file importer; users
+  cannot reach a real reconciliation workspace.
+- The live CSP (`connect-src 'self'`) blocks the Sociobot license-verification
+  fetch, leaving paid license restoration unusable.
+- Invalid imported files produce no visible or announced error/recovery path.
+- Public reliance claims are missing required claim tests, and local mobile
+  Lighthouse performance is 87 rather than the required ≥90.
 
-Initial JavaScript is 7.43 KB gzip, CSS is 2.99 KB gzip, and the LCP image is
-89 KB WebP. Automated Playwright checks provide the accessibility smoke paths
-(semantic landmark, named controls, mobile keyboard route). No browser-console
-errors were observed in the claim suite.
+Additional gaps include 30-second cache headers for hashed assets, no
+service-worker update toast, HTTP-200 fallback instead of a real 404, touch
+targets below 44px, and no effective route focus/live announcement.
 
-## Known gaps / next steps
-
-The parser deliberately accepts common transaction fields rather than every
-bank's specialized CSV layout. A future release can add a column-mapping review
-screen and a visible local audit-history browser. Lighthouse was not installed
-in this worker image, so its final numeric report is not recorded; the shipped
-asset sizes meet the declared performance budgets.
+No product code was changed during verification. To reproduce the positive
+checks, run `npm ci`, all commands in `.factory/claims.json`, `npm test`, and
+`npm run build`; use the exact live URL above for deployment checks. Fix the
+listed blockers, then re-run independent verification.
