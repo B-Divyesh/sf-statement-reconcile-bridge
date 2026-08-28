@@ -1,4 +1,5 @@
 import './style.css';
+import './paid.css';
 import heroUrl from './assets/reconcile-workbench.webp';
 import { ledgerSample, statementSample, type Match, type Transaction } from './data';
 import { makeMatches, parseFile, type CleanupRule } from './reconcile';
